@@ -43,7 +43,6 @@ function OweChip({ name, idx, amountUsd }: { name: string; idx: number; amountUs
       <div className="font-[family-name:var(--font-section)] text-lg font-bold tabular-nums tracking-tight text-aqua">
         {USD.format(amountUsd)}
       </div>
-      <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-foreground/45">to Alex</p>
     </div>
   );
 }
@@ -118,8 +117,8 @@ export function Payment() {
                 </div>
               </div>
 
-              <div className="grid gap-10 lg:grid-cols-2 lg:gap-8">
-                <div>
+              <div id="payment-room-splits" className="grid gap-6 lg:grid-cols-2">
+                <div className="rounded-2xl border border-[oklch(1_0_0_/16%)] bg-[linear-gradient(165deg,_oklch(1_0_0_/6%)_0%,_oklch(0.05_0.04_258/0.45)_100%)] p-5 shadow-[inset_0_1px_0_oklch(1_0_0_/8%)] sm:p-6">
                   <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
                     <div>
                       <p className="font-[family-name:var(--font-section)] text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/45">
@@ -143,8 +142,8 @@ export function Payment() {
                   </div>
                 </div>
 
-                <div className="lg:border-l lg:border-white/10 lg:pl-8">
-                  <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4 lg:pt-0">
+                <div className="rounded-2xl border border-[oklch(1_0_0_/16%)] bg-[linear-gradient(165deg,_oklch(1_0_0_/6%)_0%,_oklch(0.05_0.04_258/0.45)_100%)] p-5 shadow-[inset_0_1px_0_oklch(1_0_0_/8%)] sm:p-6">
+                  <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
                     <div>
                       <p className="font-[family-name:var(--font-section)] text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/45">
                         {r3Meta.label} · {r3Meta.cabinPhotoLabel}
@@ -189,17 +188,6 @@ export function Payment() {
                 it later, settle that separately (everyone in the room has to opt in together per Royal&apos;s rule).
               </p>
             </div>
-          </div>
-
-          <div className="mt-10 grid gap-3 sm:grid-cols-2">
-            <p className="glass rounded-xl border border-white/10 px-4 py-3 text-[12px] leading-relaxed text-foreground/65">
-              <span className="font-semibold text-foreground/80">Two cards max</span> when it&apos;s time to swipe at
-              the pier — whoever&apos;s booking just needs roommate Venmos straightened beforehand.
-            </p>
-            <p className="glass rounded-xl border border-white/10 px-4 py-3 text-[12px] leading-relaxed text-foreground/65">
-              <span className="font-semibold text-foreground/80">Affirm spread</span> — Alex&apos;s side may be on installments; your reimbursements are whatever you guys agree (
-              lump or chunk), separate from RC&apos;s billing.
-            </p>
           </div>
         </RevealOnView>
       </div>

@@ -1,6 +1,11 @@
+import { Smartphone } from "lucide-react";
+
 import heroImg from "@/assets/hero-cruise.jpg";
 
 import { CrewStrip } from "@/components/cruise/CrewStrip";
+
+const ROYAL_IOS_APP =
+  "https://apps.apple.com/us/app/royal-caribbean-international/id370144476";
 
 export function Hero() {
   return (
@@ -45,7 +50,7 @@ export function Hero() {
           className="mt-6 max-w-md text-balance text-lg leading-relaxed text-foreground/78 animate-fade-up sm:text-xl"
           style={{ animationDelay: "0.3s" }}
         >
-          Your crew's living guide: countdown, rooms, drinks math, packing list — all in one scroll.
+          Your crew&apos;s living guide: countdown, rooms, reimbursements, packing list — all in one scroll.
           <span className="mt-2 block font-[family-name:var(--font-section)] text-base font-semibold text-aqua">
             Relevant Trip info below.
           </span>
@@ -62,6 +67,19 @@ export function Hero() {
           >
             <span className="relative z-10">Dive Into the Trip</span>
             <span className="shimmer absolute inset-0" />
+          </a>
+
+          <a
+            href={ROYAL_IOS_APP}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex w-full max-w-sm items-center justify-center gap-2 rounded-full border border-white/25 bg-white/[0.08] px-5 py-3 text-sm font-semibold text-foreground/95 backdrop-blur-sm transition hover:border-aqua/45 hover:bg-white/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua/60"
+          >
+            <Smartphone className="h-4 w-4 shrink-0 text-aqua" aria-hidden />
+            <span className="text-pretty text-center leading-snug">
+              Get the <span className="text-aqua">Royal Caribbean</span> app on the App Store — check in,
+              shows, and day plans
+            </span>
           </a>
 
           <div className="w-full text-left">

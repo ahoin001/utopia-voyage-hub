@@ -1,10 +1,12 @@
-import { Banknote, Percent, Ship, Sparkles, Users } from "lucide-react";
+import { Banknote, Percent, Ship, Sparkles, Users, Wallet } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
 import { RevealOnView } from "@/components/RevealOnView";
+import { ReservationNumberField } from "@/components/cruise/ReservationNumberField";
 import balconyImg from "@/assets/balcony-room.jpg";
 
 import { useTripCrew } from "@/contexts/TripCrewContext";
+import { cn } from "@/lib/utils";
 import {
   DRINK_PACKAGE_PER_PERSON,
   ROOM_CABIN_TOTAL_USD,
@@ -176,6 +178,21 @@ const roomMetaById = Object.fromEntries(TRIP_ROOMS.map((r) => [r.id, r])) as Rec
   TripRoomInfo
 >;
 
+function SendAlexShareCta({ className }: { className?: string }) {
+  return (
+    <a
+      href="#payment-room-splits"
+      className={cn(
+        "inline-flex items-center gap-2 rounded-full border border-aqua/40 bg-aqua/[0.09] px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-aqua shadow-[0_0_28px_-14px_oklch(0.72_0.2_195/0.7)] transition hover:border-aqua/55 hover:bg-aqua/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua/50",
+        className,
+      )}
+    >
+      <Wallet className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
+      What to send Alex
+    </a>
+  );
+}
+
 export function Rooms() {
   const { highlightedRoomId } = useTripCrew();
   const drink = DRINK_PACKAGE_PER_PERSON;
@@ -317,6 +334,10 @@ export function Rooms() {
               <div className="min-w-0">
                 <h3 className="text-xl font-bold tracking-tight sm:text-2xl">{r2Meta.label}</h3>
                 <p className="mt-1.5 text-sm text-foreground/65">{r2Meta.guestNames.join(" · ")}</p>
+                {r2Meta.reservationNumber ? (
+                  <ReservationNumberField value={r2Meta.reservationNumber} className="mt-4" />
+                ) : null}
+                <SendAlexShareCta className="mt-3" />
               </div>
               <RoomStoryChip variant="cool">
                 <Ship className="h-3.5 w-3.5 shrink-0 opacity-95" aria-hidden />
@@ -397,6 +418,10 @@ export function Rooms() {
               <div className="min-w-0">
                 <h3 className="text-xl font-bold tracking-tight sm:text-2xl">{r3Meta.label}</h3>
                 <p className="mt-1.5 text-sm text-foreground/65">{r3Meta.guestNames.join(" · ")}</p>
+                {r3Meta.reservationNumber ? (
+                  <ReservationNumberField value={r3Meta.reservationNumber} className="mt-4" />
+                ) : null}
+                <SendAlexShareCta className="mt-3" />
               </div>
               <RoomStoryChip variant="cool">
                 <Sparkles className="h-3.5 w-3.5 shrink-0 opacity-95" aria-hidden />

@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Checklist } from "@/components/cruise/Checklist";
 import { Countdown } from "@/components/cruise/Countdown";
-import { Drinks } from "@/components/cruise/Drinks";
 import { Hero } from "@/components/cruise/Hero";
 import { Payment } from "@/components/cruise/Payment";
 import { Rooms } from "@/components/cruise/Rooms";
@@ -15,7 +14,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "The crew's Utopia of the Seas hub — countdown, room costs, drink package guide, packing checklist, and group cheat sheet.",
+          "The crew's Utopia of the Seas hub — countdown, room costs, what to send Alex, packing checklist, and trip planning.",
       },
       { property: "og:title", content: "Utopia Escape 🌴 — Aug 28, 2026" },
       { property: "og:description", content: "Sun. Drinks. Memories. Let's run it." },
@@ -39,9 +38,8 @@ function Index() {
         <Hero />
         <Countdown />
         <Rooms />
-        <Drinks />
-        <Checklist />
         <Payment />
+        <Checklist />
       </main>
     </TripCrewProvider>
   );

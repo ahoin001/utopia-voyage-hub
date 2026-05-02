@@ -12,6 +12,8 @@ export type TripRoomInfo = {
   cabinPhotoLabel: string;
   /** When set (e.g. 20), UI shows crossed-out estimated list fare */
   promoPercentOff: number | null;
+  /** Royal Caribbean booking reference for this cabin, when sharing with the group */
+  reservationNumber?: string;
 };
 
 export const DRINK_PACKAGE_PER_PERSON = 255;
@@ -49,6 +51,7 @@ export const TRIP_ROOMS: readonly TripRoomInfo[] = [
     guestNames: ["Alex", "Jon", "Rigo", "Tyler"],
     cabinPhotoLabel: "Ocean view balcony",
     promoPercentOff: 20,
+    reservationNumber: "6611067",
   },
   {
     id: "room-3",
@@ -57,6 +60,7 @@ export const TRIP_ROOMS: readonly TripRoomInfo[] = [
     guestNames: ["Daniella", "Nana", "Saurel", "Shirlon"],
     cabinPhotoLabel: "Neighborhood view balcony",
     promoPercentOff: 20,
+    reservationNumber: "6663730",
   },
 ] as const;
 

@@ -1,8 +1,10 @@
+import { ChevronDown } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import confetti from "canvas-confetti";
 
 import { RevealOnView } from "@/components/RevealOnView";
 import { Badge } from "@/components/ui/badge";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
 type DocPath = "passport" | "birth" | null;
@@ -160,6 +162,7 @@ function CheckRow({
 export function Checklist() {
   const [state, setState] = useState<State>({ path: null, checked: {} });
   const [hydrated, setHydrated] = useState(false);
+  const [checklistOpen, setChecklistOpen] = useState(false);
   const firedRef = useRef(false);
   const milestone25Ref = useRef(false);
   const milestone50Ref = useRef(false);
@@ -168,6 +171,11 @@ export function Checklist() {
     setState(load());
     setHydrated(true);
   }, []);
+
+  useEffect(() => {
+    if (!hydrated || typeof window === "undefined") return;
+    if (window.location.hash === "#checklist") setChecklistOpen(true);
+  }, [hydrated]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -251,36 +259,71 @@ export function Checklist() {
     <section id="checklist" className="relative px-6 py-24">
       <div className="mx-auto max-w-2xl">
         <RevealOnView>
-          <header className="mb-8 text-center">
-            <p className="mb-3 text-xs uppercase tracking-[0.3em] text-aqua">Pre-Boarding</p>
-            <h2 className="text-4xl font-bold sm:text-5xl">
-              Ready to <span className="gradient-text-sunset italic">Sail?</span> ✅
-            </h2>
-            <p className="mt-3 text-sm text-foreground/65">
-              Saved on this device. No login. No worries.
-            </p>
-          </header>
+          <Collapsible open={checklistOpen} onOpenChange={setChecklistOpen}>
+            <CollapsibleTrigger asChild>
+              <button
+                type="button"
+                className="glass-strong mb-8 w-full rounded-[1.25rem] border border-white/14 p-5 text-left shadow-[0_20px_50px_-40px_oklch(0_0_0/0.6)] outline-none transition hover:border-white/22 focus-visible:ring-2 focus-visible:ring-aqua/55 sm:p-6"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="min-w-0 flex-1 text-center sm:text-left">
+                    <p className="mb-3 text-xs uppercase tracking-[0.3em] text-aqua">Pre-Boarding</p>
+                    <h2 className="text-4xl font-bold sm:text-5xl">
+                      Ready to <span className="gradient-text-sunset italic">Sail?</span> ✅
+                    </h2>
+                    <p className="mt-3 text-sm text-foreground/65">
+                      Saved on this device. No login. No worries.
+                    </p>
+                  </div>
+                  <ChevronDown
+                    className={cn(
+                      "mt-1 h-7 w-7 shrink-0 text-aqua transition-transform duration-300",
+                      checklistOpen && "rotate-180",
+                    )}
+                    aria-hidden
+                  />
+                </div>
+                <div className="mt-6">
+                  <div className="glass-strong rounded-xl p-3">
+                    <div className="mb-2 flex items-center justify-between text-xs">
+                      <span className="uppercase tracking-widest text-foreground/70">Trip Readiness</span>
+                      <span className="font-display text-base font-bold gradient-text-aqua">
+                        {progress}%
+                      </span>
+                    </div>
+                    <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                      <div
+                        className="h-full rounded-full transition-all duration-700"
+                        style={{ width: `${progress}%`, background: "var(--gradient-aqua)" }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <p className="mt-4 text-center font-[family-name:var(--font-section)] text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground/50">
+                  {checklistOpen ? "Tap to collapse checklist" : "Open packing checklist"}
+                </p>
+              </button>
+            </CollapsibleTrigger>
 
-          <div className="sticky top-3 z-30 mb-6">
-            <div className="glass-strong p-3">
-              <div className="mb-2 flex items-center justify-between text-xs">
-                <span className="uppercase tracking-widest text-foreground/70">Trip Readiness</span>
-                <span className="font-display text-base font-bold gradient-text-aqua">
-                  {progress}%
-                </span>
+            <CollapsibleContent>
+              <div className="sticky top-3 z-30 mb-6">
+                <div className="glass-strong rounded-xl p-3">
+                  <div className="mb-2 flex items-center justify-between text-xs">
+                    <span className="uppercase tracking-widest text-foreground/70">Trip Readiness</span>
+                    <span className="font-display text-base font-bold gradient-text-aqua">
+                      {progress}%
+                    </span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                    <div
+                      className="h-full rounded-full transition-all duration-700"
+                      style={{ width: `${progress}%`, background: "var(--gradient-aqua)" }}
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-white/10">
-                <div
-                  className="h-full rounded-full transition-all duration-700"
-                  style={{ width: `${progress}%`, background: "var(--gradient-aqua)" }}
-                />
-              </div>
-            </div>
-          </div>
 
-        </RevealOnView>
-
-        {/* Documents */}
+              {/* Documents */}
         <div className="mb-3 flex flex-wrap items-center gap-2">
           <h3 className="text-lg font-semibold">🔐 Required Documents</h3>
           <Badge
@@ -383,14 +426,18 @@ export function Checklist() {
           </div>
         )}
 
-        <div className="mt-8 text-center">
-          <button
-            onClick={reset}
-            className="text-xs uppercase tracking-widest text-foreground/50 transition hover:text-foreground/80"
-          >
-            Reset Checklist
-          </button>
-        </div>
+              <div className="mt-8 text-center">
+                <button
+                  type="button"
+                  onClick={reset}
+                  className="text-xs uppercase tracking-widest text-foreground/50 transition hover:text-foreground/80"
+                >
+                  Reset Checklist
+                </button>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </RevealOnView>
       </div>
     </section>
   );
