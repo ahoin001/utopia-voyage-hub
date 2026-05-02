@@ -16,12 +16,15 @@ export type TripRoomInfo = {
 
 export const DRINK_PACKAGE_PER_PERSON = 255;
 
-/** Cabin fares after promotions (USD). Room 1 is rack with no promo. */
+/** Booked cabin totals (USD) — aligns with reimbursement math on the Payment section. */
 export const ROOM_CABIN_TOTAL_USD: Record<TripRoomId, number> = {
   "room-1": 1111,
-  "room-2": 1998,
-  "room-3": 1938,
+  "room-2": 1681,
+  "room-3": 1634,
 };
+
+/** Alex puts Rooms 2 & 3 on his card; roommate reimbursements omit him from the “owe” row. Gu’s room stays on Gu’s card. */
+export const TRIP_PAYMENT_FRONT_PERSON = "Alex";
 
 /** Estimated brochure / pre-promo totals derived from discounted fare (rounded). */
 export function estimatedListFareUsd(discountedTotal: number, promoPercentOff: number): number {
