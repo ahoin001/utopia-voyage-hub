@@ -56,10 +56,11 @@ export function Payment() {
   const r3Meta = metaById("room-3");
   const r2Total = ROOM_CABIN_TOTAL_USD["room-2"];
   const r3Total = ROOM_CABIN_TOTAL_USD["room-3"];
-  const heads = r2Meta.guestNames.length;
+  const r2Heads = r2Meta.guestNames.length;
+  const r3Heads = r3Meta.guestNames.length;
 
-  const quarter2 = r2Total / heads;
-  const quarter3 = r3Total / heads;
+  const quarter2 = r2Total / r2Heads;
+  const quarter3 = r3Total / r3Heads;
 
   const oweRoom2 = r2Meta.guestNames.filter((n) => n !== TRIP_PAYMENT_FRONT_PERSON);
   const oweRoom3 = [...r3Meta.guestNames];

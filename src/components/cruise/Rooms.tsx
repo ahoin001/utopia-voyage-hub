@@ -390,7 +390,7 @@ export function Rooms() {
           </div>
         </article>
 
-        {/* Room 3 · Neighborhood balcony · promo */}
+        {/* Room 3 · Ocean balcony · promo */}
         <article
           id={r3Meta.anchorId}
           className={`room-card glass-strong mb-8 overflow-hidden ${highlightedRoomId === r3Meta.id ? "room-highlight" : ""}`}
@@ -398,7 +398,7 @@ export function Rooms() {
           <div className="relative">
             <img
               src={balconyImg}
-              alt="Neighborhood view balcony"
+              alt={`${r3Meta.cabinPhotoLabel} stateroom`}
               loading="lazy"
               className="aspect-[16/10] w-full object-cover sm:aspect-[21/10]"
             />
@@ -425,7 +425,7 @@ export function Rooms() {
               </div>
               <RoomStoryChip variant="cool">
                 <Sparkles className="h-3.5 w-3.5 shrink-0 opacity-95" aria-hidden />
-                <span>Neighborhood balcony · promo rate locked</span>
+                <span>Ocean view balcony · promo rate locked</span>
               </RoomStoryChip>
             </div>
 

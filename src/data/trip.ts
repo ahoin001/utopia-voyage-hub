@@ -22,7 +22,7 @@ export const DRINK_PACKAGE_PER_PERSON = 255;
 export const ROOM_CABIN_TOTAL_USD: Record<TripRoomId, number> = {
   "room-1": 1111,
   "room-2": 1681,
-  "room-3": 1634,
+  "room-3": 1752,
 };
 
 /** Alex puts Rooms 2 & 3 on his card; roommate reimbursements omit him from the “owe” row. Gu’s room stays on Gu’s card. */
@@ -58,7 +58,7 @@ export const TRIP_ROOMS: readonly TripRoomInfo[] = [
     anchorId: "room-3",
     label: "Room 3",
     guestNames: ["Daniella", "Nana", "Saurel", "Shirlon"],
-    cabinPhotoLabel: "Neighborhood view balcony",
+    cabinPhotoLabel: "Ocean view balcony",
     promoPercentOff: 20,
     reservationNumber: "6663730",
   },
