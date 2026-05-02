@@ -1,19 +1,59 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import confetti from "canvas-confetti";
 
+import { RevealOnView } from "@/components/RevealOnView";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+
 type DocPath = "passport" | "birth" | null;
 
 const ESSENTIALS = [
-  { id: "swim", label: "Swimwear", icon: "🩱" },
-  { id: "night", label: "Night outfits", icon: "👗" },
-  { id: "shoes", label: "Flip flops + sneakers", icon: "👟" },
-  { id: "sun", label: "Sunscreen", icon: "🧴" },
-  { id: "charger", label: "Phone charger", icon: "🔌" },
-  { id: "battery", label: "Portable charger", icon: "🔋" },
+  {
+    id: "swim",
+    label: "Swimsuits",
+    hint: "1–2 — pool days + Perfect Day; a dry backup still helps",
+    icon: "🩱",
+  },
+  {
+    id: "dayfit",
+    label: "Day outfits",
+    hint: "2–3 casual looks — 3 nights means mix-and-match tops & shorts is enough",
+    icon: "👕",
+  },
+  {
+    id: "night",
+    label: "Evening outfits",
+    hint: "2 dressier looks — main dining + one smart-casual flex (check MDR dress code)",
+    icon: "👗",
+  },
+  {
+    id: "shoes",
+    label: "Footwear",
+    hint: "Flip-flops + one walkable pair — ship + CocoCay without sore feet",
+    icon: "👟",
+  },
+  {
+    id: "sun",
+    label: "Sunscreen",
+    hint: "Broad spectrum — Bahamas sun is no joke even on a quick trip",
+    icon: "🧴",
+  },
+  {
+    id: "charger",
+    label: "Phone charger",
+    hint: "Short cruise, but outlets are still gold between sea & port days",
+    icon: "🔌",
+  },
+  {
+    id: "battery",
+    label: "Portable charger",
+    hint: "Nice for long port / photo days — skip if you travel ultra light",
+    icon: "🔋",
+  },
 ];
 
 const OPTIONALS = [
-  { id: "wine", label: "Wine (2 bottles max)", icon: "🍷" },
+  { id: "wine", label: "Wine (2 bottles max per room)", icon: "🍷" },
   { id: "meds", label: "Motion sickness meds", icon: "💊" },
   { id: "shades", label: "Sunglasses", icon: "🕶️" },
   { id: "case", label: "Waterproof phone case", icon: "📱" },
@@ -31,6 +71,7 @@ const BIRTH = [
 ];
 
 const STORAGE_KEY = "utopia-checklist-v1";
+const PARTY_COLORS = ["#5dd6e6", "#ffb869", "#ffd479", "#ff7e7e"] as const;
 
 type State = {
   path: DocPath;
@@ -42,24 +83,36 @@ function load(): State {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw) as State;
-  } catch {}
+  } catch {
+    void 0;
+  }
   return { path: null, checked: {} };
 }
 
 function CheckRow({
-  id, label, icon, checked, onToggle, weight,
+  id,
+  label,
+  hint,
+  icon,
+  checked,
+  onToggle,
 }: {
-  id: string; label: string; icon?: string; checked: boolean; onToggle: () => void; weight?: string;
+  id: string;
+  label: string;
+  hint?: string;
+  icon?: string;
+  checked: boolean;
+  onToggle: () => void;
 }) {
   return (
     <button
       onClick={onToggle}
-      className={`group flex w-full items-center gap-3 rounded-xl border border-white/10 p-3 text-left transition-all active:scale-[0.98] ${
+      className={`group flex w-full items-start gap-3 rounded-xl border border-white/10 p-3 text-left transition-all active:scale-[0.98] ${
         checked ? "bg-aqua/10 border-aqua/40" : "bg-white/[0.03] hover:bg-white/[0.06]"
       }`}
     >
       <span
-        className={`relative flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md border-2 transition-all ${
+        className={`relative mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md border-2 transition-all ${
           checked ? "border-aqua bg-aqua" : "border-white/30"
         }`}
       >
@@ -76,16 +129,30 @@ function CheckRow({
           </svg>
         )}
       </span>
-      {icon && <span className="text-xl">{icon}</span>}
-      <span
-        className={`flex-1 text-sm transition-all ${
-          checked ? "text-foreground/55 line-through" : "text-foreground"
-        }`}
-      >
-        {label}
-        {weight && <span className="ml-2 text-[10px] uppercase tracking-widest text-sunset">{weight}</span>}
+      {icon && <span className="mt-0.5 text-xl">{icon}</span>}
+      <span className="min-w-0 flex-1">
+        <span
+          className={cn(
+            "block text-sm transition-all",
+            checked ? "text-foreground/55 line-through" : "text-foreground",
+          )}
+        >
+          {label}
+        </span>
+        {hint && (
+          <span
+            className={cn(
+              "mt-1 block text-pretty text-xs leading-relaxed transition-all",
+              checked ? "text-foreground/35 line-through" : "text-foreground/58",
+            )}
+          >
+            {hint}
+          </span>
+        )}
       </span>
-      <span className="sr-only" aria-hidden="false">{id}</span>
+      <span className="sr-only" aria-hidden="false">
+        {id}
+      </span>
     </button>
   );
 }
@@ -94,6 +161,8 @@ export function Checklist() {
   const [state, setState] = useState<State>({ path: null, checked: {} });
   const [hydrated, setHydrated] = useState(false);
   const firedRef = useRef(false);
+  const milestone25Ref = useRef(false);
+  const milestone50Ref = useRef(false);
 
   useEffect(() => {
     setState(load());
@@ -104,16 +173,20 @@ export function Checklist() {
     if (!hydrated) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch {}
+    } catch {
+      void 0;
+    }
   }, [state, hydrated]);
 
   const toggle = (id: string) =>
     setState((s) => ({ ...s, checked: { ...s.checked, [id]: !s.checked[id] } }));
 
-  const setPath = (p: DocPath) =>
-    setState((s) => ({ ...s, path: s.path === p ? null : p }));
+  const setPath = (p: DocPath) => setState((s) => ({ ...s, path: s.path === p ? null : p }));
 
-  const docItems = state.path === "passport" ? PASSPORT : state.path === "birth" ? BIRTH : [];
+  const docItems = useMemo(
+    () => (state.path === "passport" ? PASSPORT : state.path === "birth" ? BIRTH : []),
+    [state.path],
+  );
   const docDone = state.path !== null && docItems.every((i) => state.checked[i.id]);
   const essDone = ESSENTIALS.every((i) => state.checked[i.id]);
   const allDone = docDone && essDone;
@@ -135,58 +208,99 @@ export function Checklist() {
         particleCount: 160,
         spread: 90,
         origin: { y: 0.5 },
-        colors: ["#5dd6e6", "#ffb869", "#ffd479", "#ff7e7e"],
+        colors: [...PARTY_COLORS],
       });
       if (navigator.vibrate) navigator.vibrate([50, 30, 80]);
     }
     if (!allDone) firedRef.current = false;
   }, [allDone, hydrated]);
 
-  const reset = () => setState({ path: null, checked: {} });
+  useEffect(() => {
+    if (!hydrated) return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const burst = (n: number, y: number) => {
+      if (reduceMotion) return;
+      confetti({
+        particleCount: n,
+        spread: 58,
+        origin: { y },
+        colors: [...PARTY_COLORS],
+      });
+    };
+
+    if (!milestone25Ref.current && progress >= 25) {
+      milestone25Ref.current = true;
+      burst(48, 0.72);
+    }
+    if (!milestone50Ref.current && progress >= 50) {
+      milestone50Ref.current = true;
+      burst(56, 0.65);
+    }
+    if (progress < 25) milestone25Ref.current = false;
+    if (progress < 50) milestone50Ref.current = false;
+  }, [progress, hydrated]);
+
+  const reset = () => {
+    milestone25Ref.current = false;
+    milestone50Ref.current = false;
+    setState({ path: null, checked: {} });
+  };
 
   return (
     <section id="checklist" className="relative px-6 py-24">
       <div className="mx-auto max-w-2xl">
-        <header className="mb-8 text-center">
-          <p className="mb-3 text-xs uppercase tracking-[0.3em] text-aqua">Pre-Boarding</p>
-          <h2 className="text-4xl font-bold sm:text-5xl">
-            Ready to <span className="gradient-text-sunset italic">Sail?</span> ✅
-          </h2>
-          <p className="mt-3 text-sm text-foreground/65">
-            Saved on this device. No login. No worries.
-          </p>
-        </header>
+        <RevealOnView>
+          <header className="mb-8 text-center">
+            <p className="mb-3 text-xs uppercase tracking-[0.3em] text-aqua">Pre-Boarding</p>
+            <h2 className="text-4xl font-bold sm:text-5xl">
+              Ready to <span className="gradient-text-sunset italic">Sail?</span> ✅
+            </h2>
+            <p className="mt-3 text-sm text-foreground/65">
+              Saved on this device. No login. No worries.
+            </p>
+          </header>
 
-        {/* Progress */}
-        <div className="sticky top-3 z-30 mb-6">
-          <div className="glass-strong p-3">
-            <div className="mb-2 flex items-center justify-between text-xs">
-              <span className="uppercase tracking-widest text-foreground/70">Trip Readiness</span>
-              <span className="font-display text-base font-bold gradient-text-aqua">{progress}%</span>
-            </div>
-            <div className="h-2 overflow-hidden rounded-full bg-white/10">
-              <div
-                className="h-full rounded-full transition-all duration-700"
-                style={{ width: `${progress}%`, background: "var(--gradient-aqua)" }}
-              />
+          <div className="sticky top-3 z-30 mb-6">
+            <div className="glass-strong p-3">
+              <div className="mb-2 flex items-center justify-between text-xs">
+                <span className="uppercase tracking-widest text-foreground/70">Trip Readiness</span>
+                <span className="font-display text-base font-bold gradient-text-aqua">
+                  {progress}%
+                </span>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                <div
+                  className="h-full rounded-full transition-all duration-700"
+                  style={{ width: `${progress}%`, background: "var(--gradient-aqua)" }}
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Sticky banner */}
-        <div className="mb-6 rounded-2xl border border-sunset/30 bg-sunset/10 p-3 text-center text-xs text-sunset">
-          ⚠️ Documents must be <strong>original</strong>. Names must <strong>match</strong> your booking.
-        </div>
+        </RevealOnView>
 
         {/* Documents */}
-        <h3 className="mb-3 text-lg font-semibold">🔐 Required Documents</h3>
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          <h3 className="text-lg font-semibold">🔐 Required Documents</h3>
+          <Badge
+            variant="outline"
+            className="border-aqua/45 bg-aqua/12 text-[10px] font-bold uppercase tracking-[0.12em] text-aqua shadow-none"
+          >
+            Required
+          </Badge>
+        </div>
         <p className="mb-4 text-xs text-foreground/60">Choose ONE path:</p>
 
         <div className="mb-4 grid grid-cols-2 gap-3">
           <button
             onClick={() => setPath("passport")}
             className={`glass relative overflow-hidden p-4 text-left transition-all ${
-              state.path === "passport" ? "ring-2 ring-aqua shadow-[var(--shadow-glow-aqua)]" : state.path === "birth" ? "opacity-40" : ""
+              state.path === "passport"
+                ? "ring-2 ring-aqua shadow-[var(--shadow-glow-aqua)]"
+                : state.path === "birth"
+                  ? "opacity-40"
+                  : ""
             }`}
           >
             <div className="text-2xl">🛂</div>
@@ -196,7 +310,11 @@ export function Checklist() {
           <button
             onClick={() => setPath("birth")}
             className={`glass relative overflow-hidden p-4 text-left transition-all ${
-              state.path === "birth" ? "ring-2 ring-aqua shadow-[var(--shadow-glow-aqua)]" : state.path === "passport" ? "opacity-40" : ""
+              state.path === "birth"
+                ? "ring-2 ring-aqua shadow-[var(--shadow-glow-aqua)]"
+                : state.path === "passport"
+                  ? "opacity-40"
+                  : ""
             }`}
           >
             <div className="text-2xl">📄</div>
@@ -214,17 +332,25 @@ export function Checklist() {
                 label={i.label}
                 checked={!!state.checked[i.id]}
                 onToggle={() => toggle(i.id)}
-                weight="critical"
               />
             ))}
           </div>
         )}
 
         {/* Essentials */}
-        <h3 className="mb-3 mt-8 text-lg font-semibold">🎒 Essentials</h3>
+        <h3 className="mb-1 mt-8 text-lg font-semibold">🎒 Essentials</h3>
+        <p className="mb-3 text-xs text-foreground/55">
+          Balanced for a <span className="font-semibold text-aqua/90">3-night</span> sailing — pack light,
+          repeat outfits, and tweak for how extra you want to be.
+        </p>
         <div className="mb-8 space-y-2">
           {ESSENTIALS.map((i) => (
-            <CheckRow key={i.id} {...i} checked={!!state.checked[i.id]} onToggle={() => toggle(i.id)} />
+            <CheckRow
+              key={i.id}
+              {...i}
+              checked={!!state.checked[i.id]}
+              onToggle={() => toggle(i.id)}
+            />
           ))}
         </div>
 
@@ -232,13 +358,21 @@ export function Checklist() {
         <h3 className="mb-3 mt-8 text-lg font-semibold">🍾 Optionals</h3>
         <div className="space-y-2">
           {OPTIONALS.map((i) => (
-            <CheckRow key={i.id} {...i} checked={!!state.checked[i.id]} onToggle={() => toggle(i.id)} />
+            <CheckRow
+              key={i.id}
+              {...i}
+              checked={!!state.checked[i.id]}
+              onToggle={() => toggle(i.id)}
+            />
           ))}
         </div>
 
         {/* Completion */}
         {allDone && (
-          <div className="mt-8 animate-scale-in rounded-2xl border border-aqua/40 p-6 text-center" style={{ background: "var(--gradient-aqua)" }}>
+          <div
+            className="mt-8 animate-scale-in rounded-2xl border border-aqua/40 p-6 text-center"
+            style={{ background: "var(--gradient-aqua)" }}
+          >
             <div className="text-5xl">🌴🍹</div>
             <div className="mt-2 font-display text-2xl font-bold text-background">
               You're officially ready for Utopia

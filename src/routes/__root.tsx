@@ -1,5 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 
+import { Toaster } from "@/components/ui/sonner";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
@@ -38,9 +39,20 @@ export const Route = createRootRoute({
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "Utopia Escape — Bahamas Cruise" },
-      { name: "twitter:description", content: "The crew's Utopia of the Seas trip — Aug 28, 2026." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3004f12f-1961-4355-a129-be8a4eeebfd0/id-preview-4dcb6cb3--6a18313b-3cb7-455b-bce4-584f764a3ca8.lovable.app-1777735802989.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3004f12f-1961-4355-a129-be8a4eeebfd0/id-preview-4dcb6cb3--6a18313b-3cb7-455b-bce4-584f764a3ca8.lovable.app-1777735802989.png" },
+      {
+        name: "twitter:description",
+        content: "The crew's Utopia of the Seas trip — Aug 28, 2026.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3004f12f-1961-4355-a129-be8a4eeebfd0/id-preview-4dcb6cb3--6a18313b-3cb7-455b-bce4-584f764a3ca8.lovable.app-1777735802989.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3004f12f-1961-4355-a129-be8a4eeebfd0/id-preview-4dcb6cb3--6a18313b-3cb7-455b-bce4-584f764a3ca8.lovable.app-1777735802989.png",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -48,7 +60,7 @@ export const Route = createRootRoute({
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500;1,700&family=Inter:wght@400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500;1,700&family=Plus+Jakarta+Sans:ital,wght@0,500;0,600;0,700;1,600&display=swap",
       },
     ],
   }),
@@ -65,6 +77,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+        <Toaster position="bottom-center" theme="dark" richColors closeButton />
         <Scripts />
       </body>
     </html>
