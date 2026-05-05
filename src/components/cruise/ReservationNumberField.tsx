@@ -25,16 +25,8 @@ export function ReservationNumberField({ value, className }: ReservationNumberFi
   const id = useId();
 
   return (
-    <div
-      className={cn(
-        "rounded-xl border border-[oklch(1_0_0_/14%)] bg-[linear-gradient(180deg,_oklch(1_0_0_/6%)_0%,_oklch(0.08_0.04_255/0.35)_100%)] p-3",
-        className,
-      )}
-    >
-      <label
-        htmlFor={id}
-        className="mb-2 block font-[family-name:var(--font-section)] text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/50"
-      >
+    <div className={cn("surface-inner p-3", className)}>
+      <label htmlFor={id} className="eyebrow eyebrow-faint mb-2 block">
         Reservation number
       </label>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
@@ -47,13 +39,13 @@ export function ReservationNumberField({ value, className }: ReservationNumberFi
           inputMode="numeric"
           onFocus={(e) => e.currentTarget.select()}
           onClick={(e) => e.currentTarget.select()}
-          className="border-white/15 bg-black/25 font-mono text-sm tabular-nums tracking-wider text-foreground selection:bg-aqua/30"
+          className="border-edge bg-surface-inset font-mono text-sm tabular-nums tracking-wider text-fg selection:bg-aqua/30"
         />
         <Button
           type="button"
           variant="outline"
           size="sm"
-          className="h-9 shrink-0 border-white/20 bg-white/[0.04] hover:bg-white/[0.08] sm:min-w-[5.25rem]"
+          className="h-9 shrink-0 border-edge bg-white/[0.04] hover:bg-white/[0.08] sm:min-w-[5.25rem]"
           onClick={() => void copyReservationNumber(value)}
         >
           <Copy className="h-4 w-4 opacity-90" aria-hidden />

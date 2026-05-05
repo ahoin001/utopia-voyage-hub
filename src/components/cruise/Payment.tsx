@@ -2,6 +2,10 @@ import { Banknote, ShieldCheck, Wallet } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { RevealOnView } from "@/components/RevealOnView";
+import { SectionHeader } from "@/components/cruise/ui/SectionHeader";
+import { Stat } from "@/components/cruise/ui/Stat";
+import { Surface } from "@/components/cruise/ui/Surface";
+import { TonePill } from "@/components/cruise/ui/TonePill";
 import {
   DRINK_PACKAGE_PER_PERSON,
   ROOM_CABIN_TOTAL_USD,
@@ -10,6 +14,7 @@ import {
   type TripRoomId,
 } from "@/data/trip";
 import { useTripCrew } from "@/contexts/TripCrewContext";
+import { cn } from "@/lib/utils";
 
 const USD = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -66,11 +71,11 @@ function initials(name: string): string {
   return name.trim().slice(0, Math.min(2, name.trim().length)).toUpperCase() || "?";
 }
 
-const INITIAL_RING = [
-  "bg-gradient-to-br from-[oklch(0.72_0.16_195)] to-[oklch(0.26_0.08_260)] ring-1 ring-white/15 shadow-[0_0_24px_-6px_oklch(0.65_0.18_195/0.5)]",
-  "bg-gradient-to-br from-[oklch(0.82_0.14_165)] to-[oklch(0.32_0.1_275)] ring-1 ring-white/15 shadow-[0_0_24px_-6px_oklch(0.7_0.16_200/0.4)]",
-  "bg-gradient-to-br from-[oklch(0.88_0.15_72)] to-[oklch(0.45_0.14_25)] ring-1 ring-white/15 shadow-[0_0_24px_-6px_oklch(0.75_0.16_65/0.45)]",
-  "bg-gradient-to-br from-[oklch(0.74_0.18_295)] to-[oklch(0.35_0.1_265)] ring-1 ring-white/15 shadow-[0_0_24px_-6px_oklch(0.55_0.2_295/0.45)]",
+const AVATAR_GRADIENTS = [
+  "bg-[linear-gradient(135deg,var(--aqua)_0%,var(--deep)_100%)]",
+  "bg-[linear-gradient(135deg,var(--gold)_0%,var(--coral)_100%)]",
+  "bg-[linear-gradient(135deg,var(--sunset)_0%,var(--coral)_100%)]",
+  "bg-[linear-gradient(135deg,var(--aqua)_0%,var(--gold)_100%)]",
 ] as const;
 
 function OweChip({
@@ -84,38 +89,99 @@ function OweChip({
   amountUsd: number;
   isSelected?: boolean;
 }) {
-  const ring = INITIAL_RING[idx % INITIAL_RING.length];
+  const avatar = AVATAR_GRADIENTS[idx % AVATAR_GRADIENTS.length];
   const withDrinks = amountUsd + DRINK_PACKAGE_PER_PERSON;
+
   return (
-    <div
-      className={`group flex flex-col items-center gap-2 rounded-2xl border border-[oklch(1_0_0_/12%)] bg-[linear-gradient(180deg,_oklch(1_0_0_/7%)_0%,_oklch(0.1_0.05_258/0.42)_100%)] px-4 py-4 text-center transition-all duration-300 hover:-translate-y-0.5 hover:border-aqua/25 ${
-        isSelected ? "payment-chip-active border-aqua/55" : ""
-      }`}
+    <Surface
+      variant="inner"
+      className={cn(
+        "group flex flex-col items-center gap-2 px-4 py-4 text-center transition-all duration-300 hover:-translate-y-0.5 hover:border-edge",
+        isSelected && "payment-chip-active",
+      )}
     >
       <div
-        className={`flex h-12 w-12 items-center justify-center rounded-full text-xs font-bold uppercase tracking-wide text-[oklch(0.98_0.01_220)] ${ring}`}
+        className={cn(
+          "flex h-12 w-12 items-center justify-center rounded-full text-xs font-bold uppercase tracking-wide text-fg ring-1 ring-edge shadow-[0_0_22px_-6px_oklch(0_0_0/0.55)]",
+          avatar,
+        )}
       >
         {initials(name)}
       </div>
-      <div className="text-sm font-semibold text-foreground">{name}</div>
+      <div className="text-sm font-semibold text-fg">{name}</div>
       <div className="font-[family-name:var(--font-section)] text-lg font-bold tabular-nums tracking-tight text-aqua transition-transform duration-300 group-hover:scale-[1.03]">
         <CountUpMoney value={amountUsd} />
       </div>
-      <div className="rounded-full border border-sunset/35 bg-sunset/12 px-2.5 py-1 text-[11px] font-semibold tabular-nums text-sunset">
-        + {USD.format(DRINK_PACKAGE_PER_PERSON)} for drink package
+      <TonePill tone="sunset" size="sm" className="tabular-nums normal-case tracking-normal">
+        + {USD.format(DRINK_PACKAGE_PER_PERSON)} drink package
+      </TonePill>
+      <div className="text-xs font-medium tabular-nums text-fg-subtle">
+        With drinks: <span className="text-fg-muted"><CountUpMoney value={withDrinks} /></span>
       </div>
-      <div className="text-xs font-medium tabular-nums text-foreground/72">
-        With drinks:{" "}
-        <span className="text-foreground/90">
-          <CountUpMoney value={withDrinks} />
-        </span>
-      </div>
-    </div>
+    </Surface>
   );
 }
 
 function metaById(id: TripRoomId) {
   return TRIP_ROOMS.find((r) => r.id === id)!;
+}
+
+type RoomSplitProps = {
+  meta: ReturnType<typeof metaById>;
+  cabinTotal: number;
+  perPersonShare: number;
+  excludeFront?: boolean;
+  selectedName: string | null;
+  startIdx?: number;
+  splitColumns: string;
+  noteSuffix?: string;
+};
+
+function RoomSplitCard({
+  meta,
+  cabinTotal,
+  perPersonShare,
+  excludeFront = false,
+  selectedName,
+  startIdx = 0,
+  splitColumns,
+  noteSuffix,
+}: RoomSplitProps) {
+  const guests = excludeFront
+    ? meta.guestNames.filter((n) => n !== TRIP_PAYMENT_FRONT_PERSON)
+    : [...meta.guestNames];
+
+  return (
+    <Surface variant="inner" className="p-5 sm:p-6">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 surface-divider pb-4">
+        <div>
+          <p className="eyebrow eyebrow-faint">
+            {meta.label} · {meta.cabinPhotoLabel}
+          </p>
+          <p className="mt-1 text-sm text-fg-muted">{meta.guestNames.join(" · ")}</p>
+        </div>
+        <TonePill tone="neutral" size="md" className="tabular-nums">
+          Cabin {USD.format(cabinTotal)}
+        </TonePill>
+      </div>
+      <p className="mb-4 text-[12px] leading-relaxed text-fg-subtle">
+        ¼ each ={" "}
+        <span className="font-semibold text-fg-muted">{USD.format(perPersonShare)}</span>
+        {noteSuffix ? <> {noteSuffix}</> : null}
+      </p>
+      <div className={cn("grid gap-3 sm:gap-4", splitColumns)}>
+        {guests.map((name, idx) => (
+          <OweChip
+            key={name}
+            name={name}
+            idx={startIdx + idx}
+            amountUsd={perPersonShare}
+            isSelected={selectedName === name}
+          />
+        ))}
+      </div>
+    </Surface>
+  );
 }
 
 export function Payment() {
@@ -131,11 +197,14 @@ export function Payment() {
   const quarter3 = r3Total / r3Heads;
 
   const oweRoom2 = r2Meta.guestNames.filter((n) => n !== TRIP_PAYMENT_FRONT_PERSON);
-  const oweRoom3 = [...r3Meta.guestNames];
+  const oweRoom3 = r3Meta.guestNames;
 
-  const totalIncoming = oweRoom2.reduce((s) => s + quarter2, 0) + oweRoom3.reduce((s) => s + quarter3, 0);
+  const totalIncoming =
+    oweRoom2.reduce((s) => s + quarter2, 0) + oweRoom3.reduce((s) => s + quarter3, 0);
+
   const selectedRoomId = useMemo(
-    () => TRIP_ROOMS.find((room) => !!selectedName && room.guestNames.includes(selectedName))?.id ?? null,
+    () =>
+      TRIP_ROOMS.find((room) => !!selectedName && room.guestNames.includes(selectedName))?.id ?? null,
     [selectedName],
   );
 
@@ -148,132 +217,91 @@ export function Payment() {
 
       <div className="relative mx-auto max-w-4xl">
         <RevealOnView>
-          <header className="mb-10 text-center">
-            <p className="mb-3 font-[family-name:var(--font-section)] text-[11px] font-semibold uppercase tracking-[0.32em] text-aqua">
-              Quick reference
-            </p>
-            <h2 className="text-[clamp(2rem,5vw,3rem)] font-bold tracking-tight text-foreground">
-              What to send{" "}
-              <span className="bg-[linear-gradient(90deg,_oklch(0.85_0.14_200),_oklch(0.88_0.14_75))] bg-clip-text text-transparent">
-                Alex
-              </span>
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-pretty text-[15px] leading-relaxed text-foreground/68">
-              Alex is charging <strong className="text-foreground/88">Rooms 2 &amp; 3</strong> to his card.
-              Gu&apos;s solo cabin stays on{" "}
-              <strong className="text-foreground/88">Gu&apos;s card</strong> — no Venmo derby there. Below:
-              fair splits based on{" "}
-              <strong className="text-foreground/85">¼ of each booked cabin.</strong>
-            </p>
-          </header>
+          <SectionHeader
+            className="mb-10"
+            eyebrow="Quick reference"
+            title={
+              <>
+                What to send{" "}
+                <span className="bg-[var(--gradient-aqua)] bg-clip-text text-transparent">Alex</span>
+              </>
+            }
+            description={
+              <>
+                Alex is charging <strong className="text-fg">Rooms 2 &amp; 3</strong> to his card.
+                Gu&apos;s solo cabin stays on <strong className="text-fg">Gu&apos;s card</strong> — no
+                Venmo derby there. Below: fair splits based on{" "}
+                <strong className="text-fg">¼ of each booked cabin.</strong>
+              </>
+            }
+          />
 
-          <div className="relative overflow-hidden rounded-[1.25rem] border border-[oklch(1_0_0_/14%)] bg-[linear-gradient(155deg,_oklch(1_0_0_/9%)_0%,_oklch(0.12_0.06_255/0.5)_52%,_oklch(0.08_0.05_260/0.65)_100%)] p-1 shadow-[0_24px_60px_-40px_oklch(0_0_0/0.7)] backdrop-blur-sm">
+          <Surface variant="card-elevated" className="relative overflow-hidden p-6 sm:p-8">
             <div className="pointer-events-none absolute -right-20 top-0 h-48 w-48 rounded-full bg-aqua/10 blur-[80px]" />
-            <div className="relative rounded-xl bg-[linear-gradient(180deg,_oklch(0.06_0.045_258/0.35)_0%,_oklch(0.14_0.06_255/0.2)_100%)] px-6 py-8 sm:px-8 sm:py-10">
-              <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-                <div className="flex items-start gap-3">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-aqua/35 bg-aqua/14 text-aqua">
-                    <Wallet className="h-6 w-6" strokeWidth={2.1} aria-hidden />
-                  </span>
-                  <div>
-                    <p className="font-[family-name:var(--font-section)] text-[10px] font-bold uppercase tracking-[0.24em] text-aqua">
-                      Roommates owe Alex · combined
-                    </p>
-                    <p className="mt-2 text-4xl font-bold tracking-tighter tabular-nums text-foreground sm:text-5xl">
-                      <CountUpMoney value={totalIncoming} />
-                    </p>
-                    <p className="mt-2 max-w-md text-[13px] leading-relaxed text-foreground/55">
-                      Covers everyone reimbursing Alex for their ¼ of Rooms 2 &amp; 3 (Alex doesn&apos;t
-                      pay himself for his spot).
-                    </p>
-                  </div>
-                </div>
-              </div>
 
-              <div id="payment-room-splits" className="grid gap-6 lg:grid-cols-2">
-                {!selectedName ? (
-                  <div className="lg:col-span-2 rounded-2xl border border-aqua/35 bg-aqua/10 px-4 py-3 text-center text-sm font-medium text-foreground/82">
-                    Select your name to unlock your trip card 🌴
-                  </div>
-                ) : null}
-                <div className="rounded-2xl border border-[oklch(1_0_0_/16%)] bg-[linear-gradient(165deg,_oklch(1_0_0_/6%)_0%,_oklch(0.05_0.04_258/0.45)_100%)] p-5 shadow-[inset_0_1px_0_oklch(1_0_0_/8%)] sm:p-6">
-                  <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
-                    <div>
-                      <p className="font-[family-name:var(--font-section)] text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/45">
-                        {r2Meta.label} · {r2Meta.cabinPhotoLabel}
-                      </p>
-                      <p className="mt-1 text-sm text-foreground/70">{r2Meta.guestNames.join(" · ")}</p>
-                    </div>
-                    <span className="rounded-full bg-white/8 px-3 py-1.5 text-[11px] font-semibold text-foreground/85 ring-1 ring-white/15">
-                      Cabin {USD.format(r2Total)}
-                    </span>
-                  </div>
-                  <p className="mb-4 text-[12px] leading-relaxed text-foreground/55">
-                   ¼ each ={" "}
-                    <span className="font-semibold text-foreground/82">{USD.format(quarter2)}</span> — we
-                    only list roommates sending Alex (<strong>Alex omitted</strong>).
-                  </p>
-                  <div className={`grid gap-3 sm:gap-4 ${oweRoom2.length === 3 ? "sm:grid-cols-3" : ""}`}>
-                    {oweRoom2.map((name, idx) => (
-                      <OweChip
-                        key={name}
-                        name={name}
-                        idx={idx}
-                        amountUsd={quarter2}
-                        isSelected={selectedRoomId === "room-2" && selectedName === name}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-[oklch(1_0_0_/16%)] bg-[linear-gradient(165deg,_oklch(1_0_0_/6%)_0%,_oklch(0.05_0.04_258/0.45)_100%)] p-5 shadow-[inset_0_1px_0_oklch(1_0_0_/8%)] sm:p-6">
-                  <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
-                    <div>
-                      <p className="font-[family-name:var(--font-section)] text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/45">
-                        {r3Meta.label} · {r3Meta.cabinPhotoLabel}
-                      </p>
-                      <p className="mt-1 text-sm text-foreground/70">{r3Meta.guestNames.join(" · ")}</p>
-                    </div>
-                    <span className="rounded-full bg-white/8 px-3 py-1.5 text-[11px] font-semibold text-foreground/85 ring-1 ring-white/15">
-                      Cabin {USD.format(r3Total)}
-                    </span>
-                  </div>
-                  <p className="mb-4 text-[12px] leading-relaxed text-foreground/55">
-                   ¼ each ={" "}
-                    <span className="font-semibold text-foreground/82">{USD.format(quarter3)}</span>.
-                  </p>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-                    {oweRoom3.map((name, idx) => (
-                      <OweChip
-                        key={name}
-                        name={name}
-                        idx={idx + 4}
-                        amountUsd={quarter3}
-                        isSelected={selectedRoomId === "room-3" && selectedName === name}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-10 rounded-2xl border border-sunset/25 bg-sunset/8 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:gap-6">
-                <div className="flex items-start gap-3">
-                  <Banknote className="mt-0.5 h-5 w-5 shrink-0 text-sunset" aria-hidden />
-                  <div>
-                    <p className="font-[family-name:var(--font-section)] text-sm font-semibold text-sunset">
-                      Gu — own card
-                    </p>
-                    <p className="mt-1 text-sm leading-relaxed text-foreground/70">
-                      Gu&apos;s stateroom is <strong className="text-foreground/85">not</strong> on Alex&apos;s card.
-                      Anything between Gu and the bank stays with Gu — nothing to reimburse Alex here.
-                    </p>
-                  </div>
-                </div>
-                <ShieldCheck className="mt-4 hidden h-8 w-8 shrink-0 text-sunset/85 sm:mt-0 sm:block" aria-hidden />
-              </div>
-
+            <div className="relative mb-10 flex items-start gap-3">
+              <span className="tone-aqua flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl">
+                <Wallet className="h-6 w-6" strokeWidth={2.1} aria-hidden />
+              </span>
+              <Stat
+                label="Roommates owe Alex · combined"
+                value={<CountUpMoney value={totalIncoming} />}
+                description={
+                  <>
+                    Covers everyone reimbursing Alex for their ¼ of Rooms 2 &amp; 3 (Alex
+                    doesn&apos;t pay himself for his spot).
+                  </>
+                }
+              />
             </div>
-          </div>
+
+            <div id="payment-room-splits" className="grid gap-6 lg:grid-cols-2">
+              {!selectedName ? (
+                <div className="tone-aqua rounded-2xl px-4 py-3 text-center text-sm font-medium lg:col-span-2">
+                  Select your name to unlock your trip card 🌴
+                </div>
+              ) : null}
+
+              <RoomSplitCard
+                meta={r2Meta}
+                cabinTotal={r2Total}
+                perPersonShare={quarter2}
+                excludeFront
+                selectedName={selectedRoomId === "room-2" ? selectedName : null}
+                splitColumns={oweRoom2.length === 3 ? "sm:grid-cols-3" : ""}
+                noteSuffix="— we only list roommates sending Alex (Alex omitted)."
+              />
+
+              <RoomSplitCard
+                meta={r3Meta}
+                cabinTotal={r3Total}
+                perPersonShare={quarter3}
+                selectedName={selectedRoomId === "room-3" ? selectedName : null}
+                startIdx={4}
+                splitColumns="grid-cols-2 sm:grid-cols-4"
+              />
+            </div>
+
+            <div className="tone-sunset mt-10 flex items-center justify-between gap-6 rounded-2xl px-4 py-4">
+              <div className="flex items-start gap-3">
+                <Banknote className="mt-0.5 h-5 w-5 shrink-0 text-sunset" aria-hidden />
+                <div>
+                  <p className="font-[family-name:var(--font-section)] text-sm font-semibold text-sunset">
+                    Gu — own card
+                  </p>
+                  <p className="mt-1 text-sm leading-relaxed text-fg-muted">
+                    Gu&apos;s stateroom is <strong className="text-fg">not</strong> on Alex&apos;s
+                    card. Anything between Gu and the bank stays with Gu — nothing to reimburse Alex
+                    here.
+                  </p>
+                </div>
+              </div>
+              <ShieldCheck
+                className="hidden h-8 w-8 shrink-0 text-sunset sm:block"
+                aria-hidden
+              />
+            </div>
+          </Surface>
         </RevealOnView>
       </div>
     </section>

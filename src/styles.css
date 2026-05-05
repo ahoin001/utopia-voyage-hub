@@ -11,6 +11,8 @@
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
+
+  /* Tailwind theme bindings */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -30,11 +32,38 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  /* Brand accents */
   --color-aqua: var(--aqua);
   --color-deep: var(--deep);
   --color-sunset: var(--sunset);
   --color-gold: var(--gold);
   --color-coral: var(--coral);
+
+  /* === Semantic design tokens (the core color system) === */
+  /* Surfaces — layered ocean depths */
+  --color-surface: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-surface-inset: var(--surface-inset);
+
+  /* Foreground levels — predictable contrast against surfaces */
+  --color-fg: var(--text-primary);
+  --color-fg-muted: var(--text-secondary);
+  --color-fg-subtle: var(--text-tertiary);
+  --color-fg-faint: var(--text-quaternary);
+
+  /* Borders */
+  --color-edge: var(--border-default);
+  --color-edge-soft: var(--border-subtle);
+  --color-edge-strong: var(--border-strong);
+
+  /* Tonal accent foregrounds (text/icons on dark) */
+  --color-tone-aqua: var(--aqua-strong);
+  --color-tone-sunset: var(--sunset-strong);
+  --color-tone-gold: var(--gold-strong);
+  --color-tone-coral: var(--coral-strong);
+
   --font-display: var(--font-display);
   --font-body: var(--font-body);
   --font-section: var(--font-section);
@@ -43,99 +72,140 @@
 :root {
   --radius: 1rem;
 
-  /* Summer vacation palette */
-  --background: oklch(0.9 0.05 96);
-  --foreground: oklch(0.3 0.07 250);
+  /* ===== Brand accent palette ===== */
+  /* Vacation-bright accents that pop against deep-ocean surfaces. */
+  --aqua: oklch(0.74 0.14 220);
+  --aqua-strong: oklch(0.83 0.13 212);
+  --aqua-soft: oklch(0.74 0.14 220 / 0.16);
+  --sunset: oklch(0.83 0.16 78);
+  --sunset-strong: oklch(0.9 0.14 86);
+  --sunset-soft: oklch(0.83 0.16 78 / 0.16);
+  --gold: oklch(0.86 0.13 92);
+  --gold-strong: oklch(0.92 0.11 98);
+  --gold-soft: oklch(0.86 0.13 92 / 0.16);
+  --coral: oklch(0.78 0.14 45);
+  --coral-strong: oklch(0.84 0.13 52);
+  --coral-soft: oklch(0.78 0.14 45 / 0.14);
+  --deep: oklch(0.2 0.08 258);
 
-  --deep: oklch(0.68 0.08 225); /* soft ocean blue */
-  --aqua: oklch(0.76 0.16 195); /* bright turquoise */
-  --sunset: oklch(0.8 0.2 52); /* bright orange */
-  --gold: oklch(0.88 0.14 88); /* sun gold */
-  --coral: oklch(0.78 0.2 30);
-  /* Aurora mesh (background only — not replacing brand hues in UI chrome) */
-  --aurora-violet: oklch(0.45 0.18 295);
-  --aurora-teal: oklch(0.55 0.16 200);
-  --aurora-coral: oklch(0.55 0.14 35);
+  /* ===== Surfaces — layered ocean depths ===== */
+  --background: oklch(0.12 0.05 258); /* page */
+  --surface-1: oklch(0.17 0.06 256); /* primary card */
+  --surface-2: oklch(0.22 0.07 250); /* nested card */
+  --surface-3: oklch(0.27 0.08 244); /* hover / elevated */
+  --surface-inset: oklch(0.1 0.04 258); /* dark inset (inputs, fields) */
 
-  --card: oklch(0.95 0.03 95);
-  --card-foreground: oklch(0.32 0.08 248);
-  --popover: oklch(0.97 0.02 96);
-  --popover-foreground: oklch(0.32 0.08 248);
+  /* ===== Foreground levels ===== */
+  --text-primary: oklch(0.98 0.01 220);
+  --text-secondary: oklch(0.86 0.02 220);
+  --text-tertiary: oklch(0.72 0.03 222);
+  --text-quaternary: oklch(0.58 0.04 230);
+  --foreground: var(--text-primary);
 
-  --primary: oklch(0.76 0.16 195);
-  --primary-foreground: oklch(0.28 0.06 248);
-  --secondary: oklch(0.86 0.08 210);
-  --secondary-foreground: oklch(0.3 0.07 248);
-  --muted: oklch(0.92 0.03 96);
-  --muted-foreground: oklch(0.5 0.05 230);
-  --accent: oklch(0.8 0.2 52);
-  --accent-foreground: oklch(0.3 0.07 248);
+  /* ===== Borders ===== */
+  --border-subtle: oklch(1 0 0 / 8%);
+  --border-default: oklch(1 0 0 / 14%);
+  --border-strong: oklch(1 0 0 / 22%);
+
+  /* ===== shadcn theme tokens ===== */
+  --card: var(--surface-1);
+  --card-foreground: var(--text-primary);
+  --popover: var(--surface-2);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--aqua);
+  --primary-foreground: var(--background);
+  --secondary: var(--surface-2);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--surface-2);
+  --muted-foreground: var(--text-tertiary);
+  --accent: var(--sunset);
+  --accent-foreground: var(--background);
   --destructive: oklch(0.62 0.22 25);
-  --destructive-foreground: oklch(0.98 0.01 220);
-  --border: oklch(0.72 0.06 220 / 24%);
-  --input: oklch(0.75 0.05 220 / 24%);
-  --ring: oklch(0.76 0.16 195);
+  --destructive-foreground: var(--text-primary);
+  --border: var(--border-default);
+  --input: var(--border-default);
+  --ring: var(--aqua);
 
-  /* Gradients — sunny + tropical */
+  /* ===== Gradients ===== */
   --gradient-ocean: linear-gradient(
-    165deg,
-    oklch(0.95 0.03 95) 0%,
-    oklch(0.9 0.06 86) 24%,
-    oklch(0.86 0.1 72) 50%,
-    oklch(0.8 0.13 52) 74%,
-    oklch(0.74 0.14 200) 100%
+    162deg,
+    oklch(0.1 0.05 262) 0%,
+    oklch(0.14 0.06 255) 32%,
+    oklch(0.18 0.07 246) 68%,
+    oklch(0.24 0.08 236) 100%
   );
   --gradient-edge-vignette: radial-gradient(
     ellipse 130% 100% at 50% 115%,
-    oklch(0.78 0.15 195 / 0.26),
-    transparent 58%
+    oklch(0.52 0.14 220 / 0.2),
+    transparent 60%
   );
   --gradient-halo-top: radial-gradient(
-    ellipse 120% 80% at 50% -10%,
-    oklch(0.82 0.16 62 / 0.22),
-    transparent 52%
+    ellipse 120% 80% at 50% -8%,
+    oklch(0.86 0.14 88 / 0.14),
+    transparent 56%
   );
   --gradient-sunset: linear-gradient(
     135deg,
-    oklch(0.78 0.18 55) 0%,
-    oklch(0.72 0.18 30) 50%,
-    oklch(0.74 0.2 20) 100%
+    oklch(0.9 0.14 90) 0%,
+    oklch(0.84 0.16 72) 52%,
+    oklch(0.78 0.14 52) 100%
   );
-  --gradient-aqua: linear-gradient(135deg, oklch(0.78 0.14 200) 0%, oklch(0.65 0.16 220) 100%);
-  --gradient-luxury: linear-gradient(135deg, oklch(0.96 0.03 98) 0%, oklch(0.9 0.06 92) 52%, oklch(0.82 0.1 78) 100%);
-  --gradient-gold: linear-gradient(135deg, oklch(0.83 0.13 88) 0%, oklch(0.72 0.14 60) 100%);
+  --gradient-aqua: linear-gradient(135deg, oklch(0.82 0.12 210) 0%, oklch(0.68 0.15 230) 100%);
+  --gradient-gold: linear-gradient(135deg, oklch(0.92 0.11 98) 0%, oklch(0.82 0.12 80) 100%);
+  --gradient-coral: linear-gradient(135deg, oklch(0.86 0.12 74) 0%, oklch(0.76 0.13 56) 100%);
+  --gradient-party: linear-gradient(
+    118deg,
+    oklch(0.76 0.14 230) 0%,
+    oklch(0.82 0.13 214) 32%,
+    oklch(0.9 0.11 96) 70%,
+    oklch(0.83 0.14 72) 100%
+  );
+  --gradient-sunbeam: radial-gradient(
+    circle at 15% 8%,
+    oklch(0.9 0.11 96 / 0.32) 0%,
+    oklch(0.84 0.12 84 / 0.15) 24%,
+    transparent 58%
+  );
+  --gradient-luxury: linear-gradient(
+    135deg,
+    oklch(0.18 0.06 248) 0%,
+    oklch(0.22 0.08 245) 50%,
+    oklch(0.18 0.06 260) 100%
+  );
   --gradient-sunrise-mobile: linear-gradient(
     160deg,
-    oklch(0.86 0.18 62 / 0.24) 0%,
-    oklch(0.8 0.18 36 / 0.18) 36%,
-    oklch(0.76 0.2 20 / 0.12) 68%,
+    oklch(0.78 0.18 55 / 0.18) 0%,
+    oklch(0.72 0.18 30 / 0.12) 36%,
+    oklch(0.58 0.18 320 / 0.08) 70%,
     transparent 100%
   );
   --gradient-reef-mobile: linear-gradient(
     170deg,
-    oklch(0.8 0.14 195 / 0.22) 0%,
-    oklch(0.74 0.14 210 / 0.16) 38%,
-    oklch(0.66 0.11 220 / 0.1) 72%,
+    oklch(0.78 0.14 200 / 0.16) 0%,
+    oklch(0.62 0.16 215 / 0.1) 40%,
+    oklch(0.3 0.09 240 / 0.08) 72%,
     transparent 100%
   );
 
-  /* Liquid surfaces */
-  --glass-bg: oklch(1 0 0 / 22%);
+  /* ===== Glass surfaces (light overlays on deep) ===== */
+  --glass-bg: oklch(1 0 0 / 7%);
   --glass-bg-inner: linear-gradient(
     180deg,
-    oklch(1 0 0 / 14%) 0%,
+    oklch(1 0 0 / 12%) 0%,
     oklch(1 0 0 / 5%) 40%,
     oklch(1 0 0 / 3%) 100%
   );
   --glass-border: oklch(1 0 0 / 16%);
   --glass-strong: oklch(1 0 0 / 11%);
 
-  /* Shadows / glows */
-  --shadow-glow-aqua: 0 10px 40px -10px oklch(0.78 0.14 200 / 0.55);
-  --shadow-glow-gold: 0 10px 40px -10px oklch(0.83 0.13 88 / 0.6);
-  --shadow-card: 0 20px 50px -20px oklch(0 0 0 / 0.5);
+  /* ===== Shadows / glows ===== */
+  --shadow-glow-aqua: 0 10px 40px -10px oklch(0.78 0.14 200 / 0.5);
+  --shadow-glow-sunset: 0 10px 40px -10px oklch(0.84 0.16 80 / 0.45);
+  --shadow-glow-gold: 0 10px 40px -10px oklch(0.9 0.11 98 / 0.5);
+  --shadow-glow-party: 0 14px 44px -14px oklch(0.82 0.14 214 / 0.52);
+  --shadow-card: 0 20px 50px -20px oklch(0 0 0 / 0.55);
 
-  /* Fonts */
+  /* ===== Fonts ===== */
   --font-display: "Playfair Display", "Cormorant Garamond", Georgia, serif;
   --font-section: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Inter", system-ui, -apple-system, sans-serif;
@@ -153,7 +223,7 @@
   }
   body {
     background:
-      var(--gradient-edge-vignette), var(--gradient-halo-top), var(--gradient-ocean);
+      var(--gradient-sunbeam), var(--gradient-edge-vignette), var(--gradient-halo-top), var(--gradient-ocean);
     color: var(--color-foreground);
     font-family: var(--font-body);
     min-height: 100vh;
@@ -196,8 +266,8 @@
   top: -8%;
   background: radial-gradient(
     circle at 40% 40%,
-    oklch(0.55 0.14 200 / 0.85),
-    oklch(0.4 0.12 250 / 0.35),
+    oklch(0.72 0.12 218 / 0.78),
+    oklch(0.48 0.11 244 / 0.34),
     transparent 68%
   );
 }
@@ -208,8 +278,8 @@
   top: 22%;
   background: radial-gradient(
     circle at 50% 50%,
-    oklch(0.52 0.2 300 / 0.75),
-    oklch(0.38 0.1 260 / 0.3),
+    oklch(0.78 0.12 210 / 0.5),
+    oklch(0.62 0.11 232 / 0.25),
     transparent 65%
   );
   animation-name: aurora-drift-b;
@@ -224,8 +294,8 @@
   bottom: -15%;
   background: radial-gradient(
     circle at 45% 45%,
-    oklch(0.62 0.16 45 / 0.55),
-    oklch(0.52 0.14 330 / 0.35),
+    oklch(0.88 0.11 94 / 0.34),
+    oklch(0.72 0.12 214 / 0.24),
     transparent 70%
   );
   animation-name: aurora-drift-c;
@@ -242,8 +312,8 @@
   top: 12%;
   background: radial-gradient(
     ellipse 55% 50% at 50% 48%,
-    oklch(0.52 0.22 292 / 0.55),
-    oklch(0.42 0.14 235 / 0.22),
+    oklch(0.74 0.13 220 / 0.5),
+    oklch(0.58 0.1 244 / 0.22),
     transparent 72%
   );
   filter: blur(88px);
@@ -259,8 +329,8 @@
   top: 55%;
   background: radial-gradient(
     ellipse 70% 80% at 60% 50%,
-    oklch(0.72 0.17 165 / 0.45),
-    oklch(0.58 0.14 225 / 0.28),
+    oklch(0.84 0.11 94 / 0.32),
+    oklch(0.72 0.12 214 / 0.25),
     transparent 68%
   );
   filter: blur(76px);
@@ -319,6 +389,148 @@
 }
 
 @layer components {
+  /* ===== Surface primitives ===== */
+  /* All cards, panels, and tiles should use one of these or a Surface component variant. */
+  .surface-card {
+    position: relative;
+    background:
+      linear-gradient(165deg, oklch(1 0 0 / 6%) 0%, oklch(1 0 0 / 1%) 100%),
+      var(--surface-1);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2xl);
+    box-shadow:
+      inset 0 1px 0 oklch(1 0 0 / 6%),
+      0 14px 40px -28px oklch(0 0 0 / 0.55);
+  }
+  .surface-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      105deg,
+      transparent 0%,
+      color-mix(in oklch, var(--sunset) 18%, transparent) 38%,
+      color-mix(in oklch, var(--aqua) 16%, transparent) 65%,
+      transparent 100%
+    );
+    opacity: 0.32;
+  }
+  .surface-card-elevated {
+    position: relative;
+    background:
+      linear-gradient(165deg, oklch(1 0 0 / 8%) 0%, oklch(1 0 0 / 2%) 100%),
+      var(--surface-2);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2xl);
+    box-shadow:
+      inset 0 1px 0 oklch(1 0 0 / 8%),
+      0 22px 56px -32px oklch(0 0 0 / 0.6);
+  }
+  .surface-card-elevated::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      118deg,
+      transparent 0%,
+      color-mix(in oklch, var(--gold) 22%, transparent) 32%,
+      color-mix(in oklch, var(--aqua) 14%, transparent) 70%,
+      transparent 100%
+    );
+    opacity: 0.34;
+  }
+  .surface-inner {
+    background:
+      linear-gradient(180deg, oklch(1 0 0 / 4%) 0%, oklch(1 0 0 / 1%) 100%),
+      var(--surface-1);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+  }
+  .surface-inset {
+    background: var(--surface-inset);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+  .surface-divider {
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  /* ===== Tonal accent surfaces ===== */
+  /* Use these for status/category banners. They guarantee contrast for fg + bg + border. */
+  .tone-aqua {
+    background: var(--aqua-soft);
+    border: 1px solid color-mix(in oklch, var(--aqua) 36%, transparent);
+    color: var(--aqua-strong);
+  }
+  .tone-sunset {
+    background: var(--sunset-soft);
+    border: 1px solid color-mix(in oklch, var(--sunset) 36%, transparent);
+    color: var(--sunset-strong);
+  }
+  .tone-gold {
+    background: var(--gold-soft);
+    border: 1px solid color-mix(in oklch, var(--gold) 36%, transparent);
+    color: var(--gold-strong);
+  }
+  .tone-coral {
+    background: var(--coral-soft);
+    border: 1px solid color-mix(in oklch, var(--coral) 36%, transparent);
+    color: var(--coral-strong);
+  }
+  .tone-neutral {
+    background: oklch(1 0 0 / 6%);
+    border: 1px solid var(--border-default);
+    color: var(--text-secondary);
+  }
+
+  /* ===== Photo + guest tile primitives ===== */
+  .room-photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      var(--background) 0%,
+      oklch(from var(--background) l c h / 0.45) 38%,
+      transparent 72%
+    );
+  }
+
+  .guest-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--border-subtle);
+    background:
+      linear-gradient(180deg, oklch(1 0 0 / 4%) 0%, oklch(1 0 0 / 1%) 100%),
+      var(--surface-2);
+  }
+
+  /* ===== Section eyebrow ===== */
+  .eyebrow {
+    font-family: var(--font-section);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--aqua-strong);
+  }
+  .eyebrow-sunset {
+    color: var(--sunset-strong);
+  }
+  .eyebrow-gold {
+    color: var(--gold-strong);
+  }
+  .eyebrow-faint {
+    color: var(--text-quaternary);
+    letter-spacing: 0.22em;
+    font-weight: 700;
+  }
+
   .glass {
     position: relative;
     isolation: isolate;
@@ -398,10 +610,16 @@
     transition: box-shadow 0.45s var(--transition-smooth);
   }
   .gradient-text-sunset {
-    background: var(--gradient-sunset);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--sunset-strong);
+  }
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .gradient-text-sunset {
+      background: var(--gradient-sunset);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+    }
   }
   .gradient-text-aqua {
     background: var(--gradient-aqua);
@@ -495,40 +713,42 @@
     gap: 0.4rem;
     max-width: 14rem;
     border-radius: 0.625rem;
-    border: 1px solid oklch(1 0 0 / 14%);
+    border: 1px solid var(--border-default);
     padding: 0.5rem 0.65rem;
     font-size: 0.6875rem;
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     line-height: 1.25;
-    color: oklch(0.95 0.02 220);
-    background: linear-gradient(145deg, oklch(1 0 0 / 9%) 0%, oklch(0.22 0.06 250 / 0.55) 100%);
+    color: var(--text-secondary);
+    background:
+      linear-gradient(145deg, oklch(1 0 0 / 6%) 0%, oklch(1 0 0 / 1%) 100%),
+      var(--surface-2);
     box-shadow:
-      inset 0 1px 0 oklch(1 0 0 / 8%),
+      inset 0 1px 0 oklch(1 0 0 / 6%),
       0 6px 20px oklch(0 0 0 / 0.35);
     backdrop-filter: blur(14px);
   }
   .room-meta-chip.room-meta-chip--cool {
-    border-color: oklch(0.78 0.14 200 / 0.28);
-    color: oklch(0.88 0.1 195);
-    background: linear-gradient(145deg, oklch(0.78 0.14 200 / 0.14) 0%, oklch(0.15 0.05 250 / 0.45) 100%);
+    border-color: color-mix(in oklch, var(--aqua) 32%, transparent);
+    color: var(--aqua-strong);
+    background: var(--aqua-soft);
     box-shadow:
-      inset 0 1px 0 oklch(0.78 0.14 200 / 0.12),
-      0 8px 24px oklch(0.78 0.14 200 / 0.12);
+      inset 0 1px 0 color-mix(in oklch, var(--aqua) 12%, transparent),
+      0 8px 24px color-mix(in oklch, var(--aqua) 12%, transparent);
   }
 
   .room-photo-label {
     display: inline-block;
     border-radius: 0.375rem;
-    border: 1px solid oklch(1 0 0 / 12%);
-    background: oklch(0.08 0.06 245 / 0.65);
+    border: 1px solid var(--border-default);
+    background: color-mix(in oklch, var(--background) 70%, transparent);
     padding: 0.25rem 0.5rem;
     font-size: 0.5625rem;
     font-weight: 700;
     letter-spacing: 0.26em;
-    color: oklch(0.92 0.08 195);
-    text-shadow: 0 1px 8px oklch(0.55 0.15 195 / 0.5);
+    color: var(--aqua-strong);
+    text-shadow: 0 1px 8px color-mix(in oklch, var(--aqua) 50%, transparent);
     backdrop-filter: blur(12px);
   }
 
@@ -537,14 +757,14 @@
     align-items: center;
     gap: 0.25rem;
     border-radius: 0 0 0 0.5rem;
-    border: 1px solid oklch(1 0 0 / 18%);
-    background: linear-gradient(135deg, oklch(0.92 0.16 72) 0%, oklch(0.72 0.18 40) 100%);
+    border: 1px solid var(--border-strong);
+    background: var(--gradient-gold);
     padding: 0.35rem 0.65rem;
     font-size: 0.625rem;
     font-weight: 800;
     letter-spacing: 0.08em;
-    color: oklch(0.14 0.04 255);
-    box-shadow: 0 8px 24px oklch(0.55 0.18 50 / 0.35);
+    color: var(--background);
+    box-shadow: 0 8px 24px color-mix(in oklch, var(--sunset) 35%, transparent);
   }
 
   .theme-zone {
@@ -563,19 +783,22 @@
 
   .theme-zone-explore::before {
     background:
-      radial-gradient(90% 70% at 50% 0%, oklch(0.8 0.16 52 / 0.15), transparent 70%),
+      radial-gradient(90% 70% at 50% 0%, oklch(0.76 0.13 216 / 0.2), transparent 72%),
+      radial-gradient(48% 36% at 16% 14%, oklch(0.88 0.1 94 / 0.14), transparent 78%),
       var(--gradient-sunrise-mobile);
   }
 
   .theme-zone-plan::before {
     background:
-      radial-gradient(100% 80% at 50% 0%, oklch(0.82 0.18 58 / 0.16), transparent 72%),
+      radial-gradient(100% 80% at 50% 0%, oklch(0.74 0.13 218 / 0.18), transparent 72%),
+      radial-gradient(40% 26% at 82% 12%, oklch(0.88 0.1 96 / 0.12), transparent 82%),
       var(--gradient-reef-mobile);
   }
 
   .trip-chip {
     position: relative;
     overflow: hidden;
+    animation: chip-bob 4.2s ease-in-out infinite;
   }
 
   .trip-chip::after {
@@ -628,6 +851,29 @@
   .motion-lift:hover {
     transform: translateY(-2px);
   }
+  .btn-party {
+    position: relative;
+    box-shadow: var(--shadow-glow-party);
+    isolation: isolate;
+  }
+  .btn-party::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: var(--gradient-party);
+    -webkit-mask:
+      linear-gradient(oklch(0 0 0) 0 0) content-box,
+      linear-gradient(oklch(0 0 0) 0 0);
+    mask:
+      linear-gradient(oklch(0 0 0) 0 0) content-box,
+      linear-gradient(oklch(0 0 0) 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.58;
+    pointer-events: none;
+  }
 
   .stagger-enter > * {
     animation: fade-up 0.72s var(--transition-smooth) both;
@@ -657,6 +903,55 @@
 
   .friend-chip-active {
     animation: chip-active-pulse 1.7s ease-in-out infinite;
+  }
+
+  .friend-chip-card {
+    background:
+      linear-gradient(160deg, oklch(1 0 0 / 0.12) 0%, oklch(0.08 0.05 258 / 0.36) 100%),
+      oklch(1 0 0 / 0.03);
+    transition:
+      transform 260ms var(--transition-smooth),
+      border-color 260ms var(--transition-smooth),
+      box-shadow 260ms var(--transition-smooth);
+    animation: crew-card-float 4.2s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  .friend-chip-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px -22px oklch(0.78 0.14 200 / 0.95);
+  }
+
+  .friend-chip-card-active {
+    background:
+      linear-gradient(160deg, oklch(0.78 0.14 200 / 0.28) 0%, oklch(0.2 0.08 252 / 0.58) 100%),
+      oklch(1 0 0 / 0.06);
+    animation: crew-card-selected 1.9s ease-in-out infinite;
+    box-shadow:
+      0 10px 28px -20px oklch(0.78 0.14 200 / 0.9),
+      inset 0 1px 0 oklch(1 0 0 / 0.2);
+  }
+
+  .friend-chip-avatar {
+    display: inline-flex;
+    height: 2rem;
+    width: 2rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid oklch(1 0 0 / 0.2);
+    background: linear-gradient(
+      145deg,
+      oklch(0.82 0.14 165 / 0.8) 0%,
+      oklch(0.72 0.16 205 / 0.72) 45%,
+      oklch(0.52 0.15 292 / 0.72) 100%
+    );
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: oklch(0.98 0.01 220);
+    box-shadow: 0 0 20px -10px oklch(0.76 0.16 195 / 0.95);
   }
 
   .payment-chip-active {
@@ -812,6 +1107,46 @@
       0 0 0 10px oklch(0.78 0.14 200 / 0);
   }
 }
+@keyframes crew-card-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+@keyframes crew-card-selected {
+  0%,
+  100% {
+    box-shadow:
+      0 10px 28px -20px oklch(0.78 0.14 200 / 0.9),
+      0 0 0 0 oklch(0.78 0.14 200 / 0.35),
+      inset 0 1px 0 oklch(1 0 0 / 0.2);
+  }
+  50% {
+    box-shadow:
+      0 12px 30px -20px oklch(0.78 0.14 200 / 0.95),
+      0 0 0 10px oklch(0.78 0.14 200 / 0),
+      inset 0 1px 0 oklch(1 0 0 / 0.2);
+  }
+}
+@keyframes summer-sparkle {
+  0% {
+    transform: translateX(-18%) scale(1);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.42;
+  }
+  70% {
+    opacity: 0.22;
+  }
+  100% {
+    transform: translateX(26%) scale(1.06);
+    opacity: 0;
+  }
+}
 @keyframes payment-chip-pulse {
   0%,
   100% {
@@ -862,6 +1197,16 @@
   background-size: 200% 100%;
   animation: shimmer 2.5s linear infinite;
 }
+.summer-sparkle {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 24% 28%, oklch(0.9 0.16 82 / 0.46) 0%, transparent 38%),
+    radial-gradient(circle at 74% 24%, oklch(0.82 0.15 198 / 0.32) 0%, transparent 32%),
+    radial-gradient(circle at 62% 68%, oklch(0.82 0.2 54 / 0.28) 0%, transparent 34%);
+  animation: summer-sparkle 8s linear infinite;
+}
 
 /* Scroll reveal (used with IntersectionObserver) */
 .reveal-on-view {
@@ -908,9 +1253,15 @@
   .trip-chip::after {
     animation: none !important;
   }
+  .trip-chip {
+    animation: none !important;
+  }
   .motion-press,
   .motion-lift {
     transition: none !important;
+  }
+  .btn-party::before {
+    opacity: 0.38 !important;
   }
   .motion-press::after {
     animation: none !important;
@@ -929,6 +1280,14 @@
     animation: none !important;
   }
   .friend-chip:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  .friend-chip-card,
+  .friend-chip-card-active {
+    animation: none !important;
+  }
+  .friend-chip-card:hover {
     transform: none !important;
     box-shadow: none !important;
   }

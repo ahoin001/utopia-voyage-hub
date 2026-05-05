@@ -109,14 +109,18 @@ function CheckRow({
   return (
     <button
       onClick={onToggle}
-      className={`group flex w-full items-start gap-3 rounded-xl border border-white/10 p-3 text-left transition-all active:scale-[0.98] ${
-        checked ? "bg-aqua/10 border-aqua/40" : "bg-white/[0.03] hover:bg-white/[0.06]"
-      }`}
+      className={cn(
+        "group flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-all active:scale-[0.98]",
+        checked
+          ? "border-aqua/40 bg-aqua/10"
+          : "border-edge-soft bg-white/[0.03] hover:bg-white/[0.06]",
+      )}
     >
       <span
-        className={`relative mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md border-2 transition-all ${
-          checked ? "border-aqua bg-aqua" : "border-white/30"
-        }`}
+        className={cn(
+          "relative mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md border-2 transition-all",
+          checked ? "border-aqua bg-aqua" : "border-edge-strong",
+        )}
       >
         {checked && (
           <svg viewBox="0 0 20 20" className="h-4 w-4 text-background animate-scale-in">
@@ -136,7 +140,7 @@ function CheckRow({
         <span
           className={cn(
             "block text-sm transition-all",
-            checked ? "text-foreground/55 line-through" : "text-foreground",
+            checked ? "text-fg-subtle line-through" : "text-fg",
           )}
         >
           {label}
@@ -145,7 +149,7 @@ function CheckRow({
           <span
             className={cn(
               "mt-1 block text-pretty text-xs leading-relaxed transition-all",
-              checked ? "text-foreground/35 line-through" : "text-foreground/58",
+              checked ? "text-fg-faint line-through" : "text-fg-subtle",
             )}
           >
             {hint}
@@ -263,7 +267,7 @@ export function Checklist() {
             <CollapsibleTrigger asChild>
               <button
                 type="button"
-                className="glass-strong motion-press mb-8 w-full rounded-[1.25rem] border border-white/14 p-5 text-left shadow-[0_20px_50px_-40px_oklch(0_0_0/0.6)] outline-none transition hover:border-white/22 focus-visible:ring-2 focus-visible:ring-aqua/55 sm:p-6"
+                className="glass-strong motion-press mb-8 w-full rounded-[1.25rem] border border-edge p-5 text-left shadow-[0_20px_50px_-40px_oklch(0_0_0/0.6)] outline-none transition hover:border-edge-strong focus-visible:ring-2 focus-visible:ring-aqua/55 sm:p-6"
               >
                 <div className="flex items-start gap-4">
                   <div className="min-w-0 flex-1 text-center sm:text-left">
@@ -271,7 +275,7 @@ export function Checklist() {
                     <h2 className="text-4xl font-bold sm:text-5xl">
                       Ready to <span className="gradient-text-sunset italic">Sail?</span> ✅
                     </h2>
-                    <p className="mt-3 text-sm text-foreground/65">
+                    <p className="mt-3 text-sm text-fg-muted">
                       Saved on this device. No login. No worries.
                     </p>
                   </div>
@@ -286,7 +290,7 @@ export function Checklist() {
                 <div className="mt-6">
                   <div className="glass-strong rounded-xl p-3">
                     <div className="mb-2 flex items-center justify-between text-xs">
-                      <span className="uppercase tracking-widest text-foreground/70">Trip Readiness</span>
+                      <span className="uppercase tracking-widest text-fg-muted">Trip Readiness</span>
                       <span className="font-display text-base font-bold gradient-text-aqua">
                         {progress}%
                       </span>
@@ -299,7 +303,7 @@ export function Checklist() {
                     </div>
                   </div>
                 </div>
-                <p className="mt-4 text-center font-[family-name:var(--font-section)] text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground/50">
+                <p className="mt-4 text-center font-[family-name:var(--font-section)] text-[11px] font-semibold uppercase tracking-[0.2em] text-fg-subtle">
                   {checklistOpen ? "Tap to collapse checklist" : "Open packing checklist"}
                 </p>
               </button>
@@ -333,7 +337,7 @@ export function Checklist() {
             Required
           </Badge>
         </div>
-        <p className="mb-4 text-xs text-foreground/60">Choose ONE path:</p>
+        <p className="mb-4 text-xs text-fg-subtle">Choose ONE path:</p>
 
         <div className="mb-4 grid grid-cols-2 gap-3">
           <button
@@ -362,7 +366,7 @@ export function Checklist() {
           >
             <div className="text-2xl">📄</div>
             <div className="mt-2 font-semibold">Birth Certificate</div>
-            <div className="text-[11px] text-foreground/60">+ Gov ID (15+)</div>
+            <div className="text-[11px] text-fg-subtle">+ Gov ID (15+)</div>
           </button>
         </div>
 
@@ -382,7 +386,7 @@ export function Checklist() {
 
         {/* Essentials */}
         <h3 className="mb-1 mt-8 text-lg font-semibold">🎒 Essentials</h3>
-        <p className="mb-3 text-xs text-foreground/55">
+        <p className="mb-3 text-xs text-fg-subtle">
           Balanced for a <span className="font-semibold text-aqua/90">3-night</span> sailing — pack light,
           repeat outfits, and tweak for how extra you want to be.
         </p>
@@ -430,7 +434,7 @@ export function Checklist() {
                 <button
                   type="button"
                   onClick={reset}
-                  className="motion-press text-xs uppercase tracking-widest text-foreground/50 transition hover:text-foreground/80"
+                  className="motion-press text-xs uppercase tracking-widest text-fg-subtle transition hover:text-fg-muted"
                 >
                   Reset Checklist
                 </button>

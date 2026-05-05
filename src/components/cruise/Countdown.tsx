@@ -60,7 +60,7 @@ export function Countdown() {
               >
                 {String(it.v).padStart(2, "0")}
               </div>
-              <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-foreground/60 sm:text-xs">
+              <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-fg-subtle sm:text-xs">
                 {it.l}
               </div>
             </div>
