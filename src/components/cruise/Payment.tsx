@@ -1,12 +1,16 @@
-import { Banknote, ShieldCheck, Wallet } from "lucide-react";
+import { Banknote, Check, Copy, ShieldCheck, Smartphone, Wallet } from "lucide-react";
+import { useMemo, useState } from "react";
 
 import { RevealOnView } from "@/components/RevealOnView";
 import {
+  DRINK_PACKAGE_PER_PERSON,
   ROOM_CABIN_TOTAL_USD,
   TRIP_PAYMENT_FRONT_PERSON,
+  TRIP_PAYMENT_FRONT_ZELLE_PHONE,
   TRIP_ROOMS,
   type TripRoomId,
 } from "@/data/trip";
+import { useTripCrew } from "@/contexts/TripCrewContext";
 
 const USD = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -52,6 +56,10 @@ function metaById(id: TripRoomId) {
 }
 
 export function Payment() {
+  const { selectedName } = useTripCrew();
+  const [includeDrinks, setIncludeDrinks] = useState(false);
+  const [copiedPhone, setCopiedPhone] = useState(false);
+
   const r2Meta = metaById("room-2");
   const r3Meta = metaById("room-3");
   const r2Total = ROOM_CABIN_TOTAL_USD["room-2"];
@@ -67,8 +75,38 @@ export function Payment() {
 
   const totalIncoming = oweRoom2.reduce((s) => s + quarter2, 0) + oweRoom3.reduce((s) => s + quarter3, 0);
 
+  const selectedRoomMeta = useMemo(
+    () => TRIP_ROOMS.find((room) => !!selectedName && room.guestNames.includes(selectedName)),
+    [selectedName],
+  );
+  const selectedRoomShare =
+    selectedRoomMeta?.id === "room-2"
+      ? quarter2
+      : selectedRoomMeta?.id === "room-3"
+        ? quarter3
+        : 0;
+  const selectedDrinkShare =
+    selectedRoomMeta && selectedRoomMeta.id !== "room-1" ? DRINK_PACKAGE_PER_PERSON : 0;
+  const selectedTotalToAlex = selectedRoomShare + (includeDrinks ? selectedDrinkShare : 0);
+  const canOweAlex =
+    !!selectedName &&
+    selectedName !== TRIP_PAYMENT_FRONT_PERSON &&
+    selectedRoomMeta?.id !== "room-1" &&
+    selectedRoomShare > 0;
+
+  const copyZellePhone = async () => {
+    if (!TRIP_PAYMENT_FRONT_ZELLE_PHONE) return;
+    try {
+      await navigator.clipboard.writeText(TRIP_PAYMENT_FRONT_ZELLE_PHONE);
+      setCopiedPhone(true);
+      window.setTimeout(() => setCopiedPhone(false), 1400);
+    } catch {
+      setCopiedPhone(false);
+    }
+  };
+
   return (
-    <section id="payment" className="relative px-6 pb-28 pt-12">
+    <section id="payment" className="theme-zone theme-zone-plan relative px-6 pb-28 pt-12">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -left-32 bottom-40 h-72 w-72 rounded-full bg-aqua/12 blur-[100px]" />
         <div className="absolute -right-20 top-1/4 h-56 w-56 rounded-full bg-sunset/10 blur-[80px]" />
@@ -116,6 +154,103 @@ export function Payment() {
                     </p>
                   </div>
                 </div>
+              </div>
+
+              <div className="mb-8 rounded-2xl border border-aqua/25 bg-[linear-gradient(165deg,_oklch(0.78_0.14_200/0.1)_0%,_oklch(0.07_0.05_255/0.52)_100%)] p-4 sm:p-5">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <div>
+                    <p className="font-[family-name:var(--font-section)] text-[10px] font-bold uppercase tracking-[0.24em] text-aqua">
+                      Your Alex payment view
+                    </p>
+                    <p className="mt-1 text-sm text-foreground/75">
+                      {selectedName ? `For ${selectedName}` : "Pick your name in the hero section to personalize this."}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIncludeDrinks((v) => !v)}
+                    className={`motion-press rounded-full px-3 py-1.5 text-[11px] font-semibold transition ${
+                      includeDrinks
+                        ? "bg-aqua text-background"
+                        : "border border-white/20 bg-white/6 text-foreground/82 hover:bg-white/10"
+                    }`}
+                    aria-pressed={includeDrinks}
+                  >
+                    {includeDrinks ? "With drink package" : "Room only"}
+                  </button>
+                </div>
+
+                <div className="mb-4 rounded-xl border border-aqua/30 bg-aqua/10 p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-aqua">
+                        Zelle payment method
+                      </p>
+                      <p className="mt-1 flex items-center gap-1.5 text-xs leading-relaxed text-foreground/80">
+                        <Smartphone className="h-3.5 w-3.5 shrink-0 text-aqua" aria-hidden />
+                        <span>
+                          You can Zelle Alex at his phone number for your room split.
+                        </span>
+                      </p>
+                      <p className="mt-2 text-sm font-semibold text-foreground">
+                        {TRIP_PAYMENT_FRONT_ZELLE_PHONE ?? "Add Alex's number in trip data"}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={copyZellePhone}
+                      disabled={!TRIP_PAYMENT_FRONT_ZELLE_PHONE}
+                      className={`motion-press inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold transition ${
+                        TRIP_PAYMENT_FRONT_ZELLE_PHONE
+                          ? "border-aqua/45 bg-aqua/15 text-aqua hover:bg-aqua/22"
+                          : "cursor-not-allowed border-white/15 bg-white/5 text-foreground/45"
+                      }`}
+                    >
+                      {copiedPhone ? (
+                        <>
+                          <Check className="h-3.5 w-3.5" aria-hidden />
+                          Copied
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-3.5 w-3.5" aria-hidden />
+                          Copy
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {canOweAlex ? (
+                  <div className="overflow-hidden rounded-xl border border-white/12 bg-[oklch(0.06_0.04_255/0.45)]">
+                    <div className="grid grid-cols-[1fr_auto] border-b border-white/10 bg-white/5 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground/65">
+                      <span>Charge item</span>
+                      <span>Amount</span>
+                    </div>
+                    <div className="grid grid-cols-[1fr_auto] items-center px-3 py-2.5 text-sm text-foreground/88">
+                      <span>{selectedRoomMeta?.label} room share</span>
+                      <span className="tabular-nums">{USD.format(selectedRoomShare)}</span>
+                    </div>
+                    <div className="grid grid-cols-[1fr_auto] items-center border-t border-white/8 px-3 py-2.5 text-sm text-foreground/88">
+                      <span>Drink package</span>
+                      <span className="tabular-nums">
+                        {includeDrinks ? USD.format(selectedDrinkShare) : USD.format(0)}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-[1fr_auto] items-center border-t border-white/12 bg-white/5 px-3 py-3 text-sm font-semibold text-aqua">
+                      <span>Total to send Alex</span>
+                      <span className="tabular-nums">{USD.format(selectedTotalToAlex)}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="rounded-xl border border-white/12 bg-white/5 px-3 py-3 text-sm leading-relaxed text-foreground/72">
+                    {!selectedName
+                      ? "Select your name above to see your exact room + optional drink-package total."
+                      : selectedName === TRIP_PAYMENT_FRONT_PERSON
+                        ? "Alex is the payer, so this section tracks incoming reimbursements rather than what Alex owes."
+                        : "Your room is not on Alex's card, so no payment to Alex is needed from this section."}
+                  </p>
+                )}
               </div>
 
               <div id="payment-room-splits" className="grid gap-6 lg:grid-cols-2">

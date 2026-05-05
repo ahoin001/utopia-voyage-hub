@@ -9,7 +9,7 @@ const ROYAL_IOS_APP =
 
 export function Hero() {
   return (
-    <section className="relative min-h-[100svh] w-full overflow-hidden">
+    <section className="theme-zone theme-zone-explore relative min-h-[100svh] w-full overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
         <img
@@ -27,14 +27,14 @@ export function Hero() {
         style={{ animationDelay: "2s" }}
       />
 
-      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-2xl flex-col items-center justify-center px-6 text-center">
+      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-2xl flex-col items-center justify-center px-6 pb-20 pt-24 text-center sm:pb-16 sm:pt-20">
         <span className="glass mb-6 inline-flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-[0.25em] text-aqua animate-fade-up">
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-aqua" />
           Aug 28 — Sep 1, 2026
         </span>
 
         <h1
-          className="text-balance text-6xl font-bold leading-[0.92] tracking-tight sm:text-7xl md:text-8xl animate-fade-up"
+          className="animate-fade-up text-balance text-5xl font-bold leading-[0.92] tracking-tight sm:text-7xl md:text-8xl"
           style={{ animationDelay: "0.1s" }}
         >
           <span className="block">Utopia</span>
@@ -47,7 +47,7 @@ export function Hero() {
         </h1>
 
         <p
-          className="mt-6 max-w-md text-balance text-lg leading-relaxed text-foreground/78 animate-fade-up sm:text-xl"
+          className="animate-fade-up mt-5 max-w-md text-balance text-base leading-relaxed text-foreground/78 sm:mt-6 sm:text-xl"
           style={{ animationDelay: "0.3s" }}
         >
           Your crew&apos;s living guide: countdown, rooms, reimbursements, packing list — all in one scroll.
@@ -56,13 +56,22 @@ export function Hero() {
           </span>
         </p>
 
-        <div
-          className="mt-10 flex w-full max-w-xl flex-col items-center gap-6 animate-fade-up px-2"
-          style={{ animationDelay: "0.5s" }}
-        >
+        <div className="stagger-enter mt-8 flex w-full max-w-xl flex-col items-center gap-5 px-2 sm:mt-10 sm:gap-6">
+          <div className="flex w-full items-center gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <span className="trip-chip shrink-0 rounded-full border border-sunset/35 bg-sunset/12 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-sunset">
+              Nassau Day
+            </span>
+            <span className="trip-chip shrink-0 rounded-full border border-aqua/35 bg-aqua/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-aqua">
+              CocoCay Stop
+            </span>
+            <span className="trip-chip shrink-0 rounded-full border border-gold/35 bg-gold/12 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-gold">
+              Ship Nightlife
+            </span>
+          </div>
+
           <a
             href="#countdown"
-            className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-[var(--gradient-sunset)] px-8 py-4 text-base font-semibold text-foreground shadow-[var(--shadow-glow-aqua)] transition-transform hover:scale-105 active:scale-95 font-[family-name:var(--font-section)]"
+            className="motion-press motion-lift group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-[var(--gradient-sunset)] px-8 py-4 text-base font-semibold text-foreground shadow-[var(--shadow-glow-aqua)] font-[family-name:var(--font-section)]"
             style={{ background: "var(--gradient-sunset)" }}
           >
             <span className="relative z-10">Dive Into the Trip</span>
@@ -73,7 +82,7 @@ export function Hero() {
             href={ROYAL_IOS_APP}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex w-full max-w-sm items-center justify-center gap-2 rounded-full border border-white/25 bg-white/[0.08] px-5 py-3 text-sm font-semibold text-foreground/95 backdrop-blur-sm transition hover:border-aqua/45 hover:bg-white/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua/60"
+            className="motion-press inline-flex w-full max-w-sm items-center justify-center gap-2 rounded-full border border-white/25 bg-white/[0.08] px-5 py-3 text-sm font-semibold text-foreground/95 backdrop-blur-sm transition hover:border-aqua/45 hover:bg-white/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua/60"
           >
             <Smartphone className="h-4 w-4 shrink-0 text-aqua" aria-hidden />
             <span className="text-pretty text-center leading-snug">
@@ -88,7 +97,7 @@ export function Hero() {
         </div>
 
         {/* Scroll cue */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
+        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 sm:bottom-10">
           <div className="flex h-10 w-6 items-start justify-center rounded-full border-2 border-foreground/40 p-1.5">
             <div className="h-2 w-1 animate-bounce rounded-full bg-foreground/60" />
           </div>
@@ -96,18 +105,20 @@ export function Hero() {
       </div>
 
       {/* Wave divider */}
-      <svg
-        className="absolute bottom-0 left-0 z-10 w-[200%] animate-wave"
-        viewBox="0 0 1440 120"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <path
-          d="M0,64 C240,96 480,112 720,96 C960,80 1200,48 1440,64 L1440,120 L0,120 Z"
-          fill="oklch(0.14 0.07 252)"
-          opacity="0.95"
-        />
-      </svg>
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-[1] overflow-hidden">
+        <svg
+          className="w-[200%] translate-y-3 animate-wave"
+          viewBox="0 0 1440 120"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M0,64 C240,96 480,112 720,96 C960,80 1200,48 1440,64 L1440,120 L0,120 Z"
+            fill="oklch(0.14 0.07 252 / 0.88)"
+          />
+        </svg>
+        <div className="h-10 bg-[linear-gradient(180deg,_oklch(0.14_0.07_252/0.88)_0%,_oklch(0.14_0.07_252)_100%)]" />
+      </div>
     </section>
   );
 }

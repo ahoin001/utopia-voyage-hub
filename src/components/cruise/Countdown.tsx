@@ -47,7 +47,7 @@ export function Countdown() {
   ];
 
   return (
-    <section id="countdown" className="relative px-6 py-16">
+    <section id="countdown" className="theme-zone theme-zone-plan relative px-6 py-16">
       <RevealOnView className="mx-auto max-w-2xl">
         <p className="mb-4 text-center text-xs uppercase tracking-[0.3em] text-aqua">
           The Voyage Begins

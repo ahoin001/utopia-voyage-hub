@@ -22,11 +22,13 @@ export const DRINK_PACKAGE_PER_PERSON = 255;
 export const ROOM_CABIN_TOTAL_USD: Record<TripRoomId, number> = {
   "room-1": 1111,
   "room-2": 1681,
-  "room-3": 1752,
+  "room-3": 1680,
 };
 
 /** Alex puts Rooms 2 & 3 on his card; roommate reimbursements omit him from the “owe” row. Gu’s room stays on Gu’s card. */
 export const TRIP_PAYMENT_FRONT_PERSON = "Alex";
+/** Set Alex's phone number for Zelle copy UI in Payment section. */
+export const TRIP_PAYMENT_FRONT_ZELLE_PHONE: string | null = '9546846503';
 
 /** Estimated brochure / pre-promo totals derived from discounted fare (rounded). */
 export function estimatedListFareUsd(discountedTotal: number, promoPercentOff: number): number {

@@ -229,7 +229,7 @@ export function Rooms() {
       : `If the whole cabin adds drinks, tack on ~$${drink}/person.`;
 
   return (
-    <section id="rooms" className="relative px-6 py-28 sm:py-32">
+    <section id="rooms" className="theme-zone theme-zone-plan relative px-6 py-28 sm:py-32">
       <div className="mx-auto max-w-4xl">
         <RevealOnView>
           <header className="mb-14 text-center">

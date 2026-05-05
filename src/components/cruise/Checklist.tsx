@@ -256,14 +256,14 @@ export function Checklist() {
   };
 
   return (
-    <section id="checklist" className="relative px-6 py-24">
+    <section id="checklist" className="theme-zone theme-zone-plan relative px-6 py-24">
       <div className="mx-auto max-w-2xl">
         <RevealOnView>
           <Collapsible open={checklistOpen} onOpenChange={setChecklistOpen}>
             <CollapsibleTrigger asChild>
               <button
                 type="button"
-                className="glass-strong mb-8 w-full rounded-[1.25rem] border border-white/14 p-5 text-left shadow-[0_20px_50px_-40px_oklch(0_0_0/0.6)] outline-none transition hover:border-white/22 focus-visible:ring-2 focus-visible:ring-aqua/55 sm:p-6"
+                className="glass-strong motion-press mb-8 w-full rounded-[1.25rem] border border-white/14 p-5 text-left shadow-[0_20px_50px_-40px_oklch(0_0_0/0.6)] outline-none transition hover:border-white/22 focus-visible:ring-2 focus-visible:ring-aqua/55 sm:p-6"
               >
                 <div className="flex items-start gap-4">
                   <div className="min-w-0 flex-1 text-center sm:text-left">
@@ -430,7 +430,7 @@ export function Checklist() {
                 <button
                   type="button"
                   onClick={reset}
-                  className="text-xs uppercase tracking-widest text-foreground/50 transition hover:text-foreground/80"
+                  className="motion-press text-xs uppercase tracking-widest text-foreground/50 transition hover:text-foreground/80"
                 >
                   Reset Checklist
                 </button>
