@@ -17,7 +17,7 @@ export function Hero() {
           alt="Utopia of the Seas cruise ship at sunset"
           className="h-full w-full object-cover animate-slow-zoom"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[oklch(0.18_0.06_240/0.55)] via-[oklch(0.18_0.06_240/0.35)] to-[oklch(0.18_0.06_240/0.95)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[oklch(0.9_0.06_92/0.22)] via-[oklch(0.82_0.12_65/0.18)] to-[oklch(0.72_0.12_210/0.55)]" />
       </div>
 
       {/* Floating orbs */}
@@ -114,10 +114,10 @@ export function Hero() {
         >
           <path
             d="M0,64 C240,96 480,112 720,96 C960,80 1200,48 1440,64 L1440,120 L0,120 Z"
-            fill="oklch(0.14 0.07 252 / 0.88)"
+            fill="oklch(0.72 0.12 210 / 0.8)"
           />
         </svg>
-        <div className="h-10 bg-[linear-gradient(180deg,_oklch(0.14_0.07_252/0.88)_0%,_oklch(0.14_0.07_252)_100%)]" />
+        <div className="h-10 bg-[linear-gradient(180deg,_oklch(0.72_0.12_210/0.75)_0%,_oklch(0.82_0.12_84/0.45)_100%)]" />
       </div>
     </section>
   );

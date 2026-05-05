@@ -1,4 +1,5 @@
 import { Banknote, ShieldCheck, Wallet } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { RevealOnView } from "@/components/RevealOnView";
 import {
@@ -8,6 +9,7 @@ import {
   TRIP_ROOMS,
   type TripRoomId,
 } from "@/data/trip";
+import { useTripCrew } from "@/contexts/TripCrewContext";
 
 const USD = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -15,6 +17,46 @@ const USD = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
+
+function CountUpMoney({ value, durationMs = 700 }: { value: number; durationMs?: number }) {
+  const [displayValue, setDisplayValue] = useState(value);
+  const prevValueRef = useRef(value);
+
+  useEffect(() => {
+    const startValue = prevValueRef.current;
+    const endValue = value;
+    if (Math.abs(endValue - startValue) < 0.005) {
+      setDisplayValue(endValue);
+      return;
+    }
+
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (media.matches) {
+      setDisplayValue(endValue);
+      prevValueRef.current = endValue;
+      return;
+    }
+
+    let frame = 0;
+    let startTs: number | null = null;
+    const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+
+    const tick = (ts: number) => {
+      if (startTs === null) startTs = ts;
+      const elapsed = ts - startTs;
+      const progress = Math.min(1, elapsed / durationMs);
+      const eased = easeOut(progress);
+      setDisplayValue(startValue + (endValue - startValue) * eased);
+      if (progress < 1) frame = window.requestAnimationFrame(tick);
+    };
+
+    frame = window.requestAnimationFrame(tick);
+    prevValueRef.current = endValue;
+    return () => window.cancelAnimationFrame(frame);
+  }, [value, durationMs]);
+
+  return <>{USD.format(displayValue)}</>;
+}
 
 function initials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -31,11 +73,25 @@ const INITIAL_RING = [
   "bg-gradient-to-br from-[oklch(0.74_0.18_295)] to-[oklch(0.35_0.1_265)] ring-1 ring-white/15 shadow-[0_0_24px_-6px_oklch(0.55_0.2_295/0.45)]",
 ] as const;
 
-function OweChip({ name, idx, amountUsd }: { name: string; idx: number; amountUsd: number }) {
+function OweChip({
+  name,
+  idx,
+  amountUsd,
+  isSelected,
+}: {
+  name: string;
+  idx: number;
+  amountUsd: number;
+  isSelected?: boolean;
+}) {
   const ring = INITIAL_RING[idx % INITIAL_RING.length];
   const withDrinks = amountUsd + DRINK_PACKAGE_PER_PERSON;
   return (
-    <div className="group flex flex-col items-center gap-2 rounded-2xl border border-[oklch(1_0_0_/12%)] bg-[linear-gradient(180deg,_oklch(1_0_0_/7%)_0%,_oklch(0.1_0.05_258/0.42)_100%)] px-4 py-4 text-center transition-all duration-300 hover:-translate-y-0.5 hover:border-aqua/25">
+    <div
+      className={`group flex flex-col items-center gap-2 rounded-2xl border border-[oklch(1_0_0_/12%)] bg-[linear-gradient(180deg,_oklch(1_0_0_/7%)_0%,_oklch(0.1_0.05_258/0.42)_100%)] px-4 py-4 text-center transition-all duration-300 hover:-translate-y-0.5 hover:border-aqua/25 ${
+        isSelected ? "payment-chip-active border-aqua/55" : ""
+      }`}
+    >
       <div
         className={`flex h-12 w-12 items-center justify-center rounded-full text-xs font-bold uppercase tracking-wide text-[oklch(0.98_0.01_220)] ${ring}`}
       >
@@ -43,13 +99,16 @@ function OweChip({ name, idx, amountUsd }: { name: string; idx: number; amountUs
       </div>
       <div className="text-sm font-semibold text-foreground">{name}</div>
       <div className="font-[family-name:var(--font-section)] text-lg font-bold tabular-nums tracking-tight text-aqua transition-transform duration-300 group-hover:scale-[1.03]">
-        {USD.format(amountUsd)}
+        <CountUpMoney value={amountUsd} />
       </div>
       <div className="rounded-full border border-sunset/35 bg-sunset/12 px-2.5 py-1 text-[11px] font-semibold tabular-nums text-sunset">
         + {USD.format(DRINK_PACKAGE_PER_PERSON)} for drink package
       </div>
       <div className="text-xs font-medium tabular-nums text-foreground/72">
-        With drinks: <span className="text-foreground/90">{USD.format(withDrinks)}</span>
+        With drinks:{" "}
+        <span className="text-foreground/90">
+          <CountUpMoney value={withDrinks} />
+        </span>
       </div>
     </div>
   );
@@ -60,6 +119,7 @@ function metaById(id: TripRoomId) {
 }
 
 export function Payment() {
+  const { selectedName } = useTripCrew();
   const r2Meta = metaById("room-2");
   const r3Meta = metaById("room-3");
   const r2Total = ROOM_CABIN_TOTAL_USD["room-2"];
@@ -74,6 +134,10 @@ export function Payment() {
   const oweRoom3 = [...r3Meta.guestNames];
 
   const totalIncoming = oweRoom2.reduce((s) => s + quarter2, 0) + oweRoom3.reduce((s) => s + quarter3, 0);
+  const selectedRoomId = useMemo(
+    () => TRIP_ROOMS.find((room) => !!selectedName && room.guestNames.includes(selectedName))?.id ?? null,
+    [selectedName],
+  );
 
   return (
     <section id="payment" className="theme-zone theme-zone-plan relative px-6 pb-28 pt-12">
@@ -116,7 +180,7 @@ export function Payment() {
                       Roommates owe Alex · combined
                     </p>
                     <p className="mt-2 text-4xl font-bold tracking-tighter tabular-nums text-foreground sm:text-5xl">
-                      {USD.format(totalIncoming)}
+                      <CountUpMoney value={totalIncoming} />
                     </p>
                     <p className="mt-2 max-w-md text-[13px] leading-relaxed text-foreground/55">
                       Covers everyone reimbursing Alex for their ¼ of Rooms 2 &amp; 3 (Alex doesn&apos;t
@@ -127,6 +191,11 @@ export function Payment() {
               </div>
 
               <div id="payment-room-splits" className="grid gap-6 lg:grid-cols-2">
+                {!selectedName ? (
+                  <div className="lg:col-span-2 rounded-2xl border border-aqua/35 bg-aqua/10 px-4 py-3 text-center text-sm font-medium text-foreground/82">
+                    Select your name to unlock your trip card 🌴
+                  </div>
+                ) : null}
                 <div className="rounded-2xl border border-[oklch(1_0_0_/16%)] bg-[linear-gradient(165deg,_oklch(1_0_0_/6%)_0%,_oklch(0.05_0.04_258/0.45)_100%)] p-5 shadow-[inset_0_1px_0_oklch(1_0_0_/8%)] sm:p-6">
                   <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
                     <div>
@@ -146,7 +215,13 @@ export function Payment() {
                   </p>
                   <div className={`grid gap-3 sm:gap-4 ${oweRoom2.length === 3 ? "sm:grid-cols-3" : ""}`}>
                     {oweRoom2.map((name, idx) => (
-                      <OweChip key={name} name={name} idx={idx} amountUsd={quarter2} />
+                      <OweChip
+                        key={name}
+                        name={name}
+                        idx={idx}
+                        amountUsd={quarter2}
+                        isSelected={selectedRoomId === "room-2" && selectedName === name}
+                      />
                     ))}
                   </div>
                 </div>
@@ -169,7 +244,13 @@ export function Payment() {
                   </p>
                   <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
                     {oweRoom3.map((name, idx) => (
-                      <OweChip key={name} name={name} idx={idx + 4} amountUsd={quarter3} />
+                      <OweChip
+                        key={name}
+                        name={name}
+                        idx={idx + 4}
+                        amountUsd={quarter3}
+                        isSelected={selectedRoomId === "room-3" && selectedName === name}
+                      />
                     ))}
                   </div>
                 </div>
