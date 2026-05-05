@@ -625,6 +625,24 @@
   .stagger-enter > *:nth-child(3) {
     animation-delay: 180ms;
   }
+
+  .friend-chip {
+    transition:
+      transform 240ms var(--transition-smooth),
+      box-shadow 240ms var(--transition-smooth),
+      border-color 240ms var(--transition-smooth);
+    animation: chip-bob 3.8s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  .friend-chip:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 12px 26px -18px oklch(0.78 0.14 200 / 0.9);
+  }
+
+  .friend-chip-active {
+    animation: chip-active-pulse 1.7s ease-in-out infinite;
+  }
 }
 
 /* Animations */
@@ -749,6 +767,28 @@
     transform: translateX(100%);
   }
 }
+@keyframes chip-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+@keyframes chip-active-pulse {
+  0%,
+  100% {
+    box-shadow:
+      var(--shadow-glow-aqua),
+      0 0 0 0 oklch(0.78 0.14 200 / 0.35);
+  }
+  50% {
+    box-shadow:
+      var(--shadow-glow-aqua),
+      0 0 0 10px oklch(0.78 0.14 200 / 0);
+  }
+}
 @keyframes countdown-tick-pop {
   0% {
     transform: scale(1);
@@ -840,5 +880,13 @@
   }
   .stagger-enter > * {
     animation: none !important;
+  }
+  .friend-chip,
+  .friend-chip-active {
+    animation: none !important;
+  }
+  .friend-chip:hover {
+    transform: none !important;
+    box-shadow: none !important;
   }
 }
